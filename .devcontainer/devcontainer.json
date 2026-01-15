@@ -1,0 +1,6 @@
+{
+	"name": "user-auth",
+	"dockerComposeFile": "./compose.yaml",
+	"service": "app",
+	"workspaceFolder": "/home/dev-user/dev"
+}

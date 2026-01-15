@@ -1,0 +1,18 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+	"files": {
+		"includes": [
+			"**/*.ts",
+			"**/*.tsx",
+			"**/*.json",
+			"**/*.jsonc",
+			"!.devcontainer",
+			"!.git",
+			"!.github",
+			"!.vscode",
+			"!.wrangler",
+			"!dist",
+			"!node_modules"
+		]
+	}
+}

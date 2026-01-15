@@ -1,0 +1,10 @@
+*.pem
+*.ppk
+.env*
+!.env.example
+
+.wrangler/
+dist/
+node_modules/
+
+vite.config.*.timestamp*

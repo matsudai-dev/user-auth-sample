@@ -1,0 +1,17 @@
+name: "user-auth"
+services:
+  app:
+    container_name: user-auth-app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID}
+    ports:
+      - 5173:5173
+      - 8787:8787
+      - 9323:9323
+    volumes:
+      - ../:/home/dev-user/dev
+    tty: true
