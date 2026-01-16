@@ -13,3 +13,6 @@ export const ACCESS_TOKEN_EXPIRATION_MS = 15 * 60 * 1000; // 15 minutes
 
 /** Refresh token expiration duration in milliseconds */
 export const REFRESH_TOKEN_EXPIRATION_MS = 31 * 24 * 60 * 60 * 1000; // 31 days
+
+/** MFA login session expiration duration in milliseconds */
+export const MFA_LOGIN_SESSION_EXPIRATION_MS = 5 * 60 * 1000; // 5 minutes
