@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, randomBytes, randomInt } from "node:crypto";
 
 /**
  * Generates a UUIDv7 (time-ordered UUID).
@@ -114,4 +114,18 @@ export function hashPassword(password: string, salt: string): string {
 	return createHash("sha256")
 		.update(password + salt)
 		.digest("hex");
+}
+
+/**
+ * Generates a 6-digit OTP code.
+ *
+ * @returns 6-digit OTP code as a string
+ *
+ * @example
+ * const otpCode = generateOtpCode();
+ * // => "123456"
+ */
+export function generateOtpCode(): string {
+	const code = randomInt(0, 1000000);
+	return code.toString().padStart(6, "0");
 }

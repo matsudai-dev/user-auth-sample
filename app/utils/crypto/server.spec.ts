@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { setTimeout } from "node:timers/promises";
 import {
+	generateOtpCode,
 	generateSalt,
 	generateSecureToken,
 	generateUuidv7,
@@ -235,5 +236,29 @@ describe("hashPassword", () => {
 
 		expect(hash.length).toBe(64);
 		expect(hash).toMatch(/^[0-9a-f]+$/);
+	});
+});
+
+describe("generateOtpCode", () => {
+	it("should generate a 6-digit code", () => {
+		const code = generateOtpCode();
+
+		expect(code.length).toBe(6);
+	});
+
+	it("should only contain numeric characters", () => {
+		const code = generateOtpCode();
+
+		expect(code).toMatch(/^\d{6}$/);
+	});
+
+	it("should generate codes within valid range", () => {
+		const codes = Array.from({ length: 1000 }, () => generateOtpCode());
+
+		for (const code of codes) {
+			const numericCode = Number.parseInt(code, 10);
+			expect(numericCode).toBeGreaterThanOrEqual(0);
+			expect(numericCode).toBeLessThanOrEqual(999999);
+		}
 	});
 });
