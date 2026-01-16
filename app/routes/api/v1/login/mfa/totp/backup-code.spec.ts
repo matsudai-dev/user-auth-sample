@@ -199,7 +199,6 @@ describe("POST /api/v1/login/mfa/totp/backup-code - Error cases", () => {
 								id: "backup-code-id",
 								userId: "user-id",
 								backupCodeHash: "hash",
-								used: true,
 								usedAt: new Date(),
 							});
 						},
@@ -273,7 +272,6 @@ describe("POST /api/v1/login/mfa/totp/backup-code - Success cases", () => {
 								id: "backup-code-id",
 								userId: "user-id",
 								backupCodeHash: "hash",
-								used: false,
 								usedAt: null,
 							});
 						},
@@ -342,7 +340,6 @@ describe("POST /api/v1/login/mfa/totp/backup-code - Success cases", () => {
 								id: "backup-code-id",
 								userId: "user-id",
 								backupCodeHash: "hash",
-								used: false,
 								usedAt: null,
 							});
 						},

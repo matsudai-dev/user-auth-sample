@@ -226,8 +226,6 @@ export const mfaTotpBackupCodesTable = sqliteTable("mfa_totp_backup_codes", {
 		.references(() => usersTable.id),
 	/** Hashed backup code */
 	backupCodeHash: text("backup_code_hash").notNull(),
-	/** Whether the backup code has been used */
-	used: boolean("used").notNull().default(false),
 	/** Timestamp when the backup code was created */
 	createdAt: timestamp("created_at").notNull().default(now()),
 	/** Timestamp when the backup code was used */
@@ -246,8 +244,6 @@ export const mfaEmailOtpBackupCodesTable = sqliteTable(
 			.references(() => usersTable.id),
 		/** Hashed backup code */
 		backupCodeHash: text("backup_code_hash").notNull(),
-		/** Whether the backup code has been used */
-		used: boolean("used").notNull().default(false),
 		/** Timestamp when the backup code was created */
 		createdAt: timestamp("created_at").notNull().default(now()),
 		/** Timestamp when the backup code was used */

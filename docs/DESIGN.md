@@ -473,9 +473,8 @@ interface Cookie {
 3. `mfa_totp_backup_codes` からユーザーのバックアップコードを検索
 4. `request.code` をハッシュ化して `backup_code_hash` と照合
     - 一致するコードが存在しない場合は `401 Unauthorized` を返却
-    - 既に使用済み（`used = true`）の場合は `401 Unauthorized` を返却
+    - 既に使用済み（`used_at IS NOT NULL`）の場合は `401 Unauthorized` を返却
 5. バックアップコードを使用済みとしてマーク:
-    - `used` = `true`
     - `used_at` = 現在日時
 6. アクセストークン（JWT、有効期限15分）を生成してクッキーに設定
     - `sub` : `users.id`
@@ -539,9 +538,8 @@ interface Cookie {
 3. `mfa_email_otp_backup_codes` からユーザーのバックアップコードを検索
 4. `request.code` をハッシュ化して `backup_code_hash` と照合
     - 一致するコードが存在しない場合は `401 Unauthorized` を返却
-    - 既に使用済み（`used = true`）の場合は `401 Unauthorized` を返却
+    - 既に使用済み（`used_at IS NOT NULL`）の場合は `401 Unauthorized` を返却
 5. バックアップコードを使用済みとしてマーク:
-    - `used` = `true`
     - `used_at` = 現在日時
 6. アクセストークン（JWT、有効期限15分）を生成してクッキーに設定
     - `sub` : `users.id`
@@ -886,8 +884,7 @@ interface Response {
 6. 各コードを整形:
     - `id` : バックアップコードID
     - `partialCode` : 最後の4文字のみ表示、残りは `*` でマスク
-    - `used` : 使用済みフラグ
-    - `usedAt` : 使用日時（使用済みの場合のみ）
+    - `usedAt` : 使用日時（`NULL` の場合は未使用）
 7. `200 OK` を返却
     - `backupCodes` : コード一覧
     - `totalCount` : 総数
@@ -1077,8 +1074,7 @@ interface Response {
 6. 各コードを整形:
     - `id` : バックアップコードID
     - `partialCode` : 最後の4文字のみ表示、残りは `*` でマスク
-    - `used` : 使用済みフラグ
-    - `usedAt` : 使用日時（使用済みの場合のみ）
+    - `usedAt` : 使用日時（`NULL` の場合は未使用）
 7. `200 OK` を返却
     - `backupCodes` : コード一覧
     - `totalCount` : 総数
@@ -1326,7 +1322,6 @@ interface Response {
 - `id` : UUIDv7
 - `user_id` -> `users.id`
 - `backup_code_hash`
-- `used` : boolean
 - `created_at`
 - `used_at` (nullable)
 
@@ -1334,7 +1329,6 @@ interface Response {
 - `id` : UUIDv7
 - `user_id` -> `users.id`
 - `backup_code_hash`
-- `used` : boolean
 - `created_at`
 - `used_at` (nullable)
 

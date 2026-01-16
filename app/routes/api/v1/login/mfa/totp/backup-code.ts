@@ -84,14 +84,13 @@ export const route = createHonoApp().post(
 			)
 			.get();
 
-		if (!backupCode || backupCode.used) {
+		if (!backupCode || backupCode.usedAt) {
 			return c.text(UNAUTHORIZED, 401);
 		}
 
 		await db
 			.update(mfaTotpBackupCodesTable)
 			.set({
-				used: true,
 				usedAt: now,
 			})
 			.where(eq(mfaTotpBackupCodesTable.id, backupCode.id));
