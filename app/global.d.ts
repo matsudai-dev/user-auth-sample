@@ -17,6 +17,9 @@ declare module "hono" {
 		};
 		Bindings: {
 			DB: D1Database;
+			SERVER_SECRET_KEY: string;
+			RESEND_API_KEY: string;
+			RESEND_EMAIL_FROM: string;
 		} & NodeJS.ProcessEnv;
 	}
 }
