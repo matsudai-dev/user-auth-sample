@@ -12,14 +12,11 @@ Please reference this before starting any work on this project.
 - Use 4 spaces for indentation
 
 ## Testing instructions
-- This project follows Test-Driven Development (TDD) practices
-    1. Define the function name and create a stub that returns a placeholder value
-    2. Write test code for the function and run the test command to confirm all tests fail
-    3. Implement the function
-    4. Run the test command to confirm all tests pass
+1. add the function
+2. Write test code for the function
+3. Run the test command to confirm all tests pass
 - Place `{filename}.spec.ts` in the same directory as `{filename}.ts`
-- Use `./app/utils/html-parser` for DOM parsing in component tests
-- `"noUncheckedIndexedAccess": true` is configured in TypeScript, so indexed elements may be `undefined`. In test code that doesn't handle `undefined`, throw an error explicitly
+- `"noUncheckedIndexedAccess": true` is configured in TypeScript, so indexed elements may be `undefined` . In test code that doesn't handle `undefined` , throw an error explicitly
 
 ## Working with GitHub
 For all GitHub operations (creating issues, pull requests, searching code, etc.), use `gh` command.
