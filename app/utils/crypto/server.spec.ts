@@ -237,4 +237,3 @@ describe("hashPassword", () => {
 		expect(hash).toMatch(/^[0-9a-f]+$/);
 	});
 });
-

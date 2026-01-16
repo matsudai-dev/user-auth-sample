@@ -111,5 +111,7 @@ export function generateSalt(bytes = 32): string {
  * // Compare computedHash with storedHash
  */
 export function hashPassword(password: string, salt: string): string {
-	return createHash("sha256").update(password + salt).digest("hex");
+	return createHash("sha256")
+		.update(password + salt)
+		.digest("hex");
 }
