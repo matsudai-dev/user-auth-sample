@@ -1,7 +1,7 @@
 *.pem
 *.ppk
 .env*
-!.env.example
+.dev.vars
 
 .wrangler/
 dist/
