@@ -369,7 +369,7 @@ interface Cookie {
 interface Request {
   email: string;
   password: string;
-  rememberMe: boolean;
+  rememberMe?: boolean;
 }
 
 interface Response {
