@@ -331,7 +331,7 @@ interface Response {
 interface Request {
   token: string;
   password: string;
-  rememberMe: boolean;
+  rememberMe?: boolean;
 }
 
 interface Response {
