@@ -7,6 +7,7 @@
 		"biome": "biome check --write --unsafe",
 		"tsc": "tsc --noEmit",
 		"test": "bun test ./app",
+		"check": "bun run biome && bun run tsc && bun run test",
 		"dev": "vite",
 		"build": "vite build --mode client && vite build",
 		"preview": "wrangler dev",
