@@ -1258,6 +1258,7 @@ interface Response {
 - `expire_at` : 完全削除予定日時
 
 ### `signup_sessions`
+- `id` : UUIDv7
 - `email`
 - `signup_session_token_hash`
 - `created_at`
