@@ -46,10 +46,12 @@ export const deletedUsersTable = sqliteTable("deleted_users", {
 
 /** `signup_sessions` table schema definition */
 export const signupSessionsTable = sqliteTable("signup_sessions", {
+	/** UUIDv7 */
+	id: text("id").primaryKey(),
 	/** Email address for signup */
-	email: text("email").primaryKey(),
+	email: text("email").notNull().unique(),
 	/** Hashed signup session token */
-	signupSessionTokenHash: text("signup_session_token_hash").notNull(),
+	signupSessionTokenHash: text("signup_session_token_hash").notNull().unique(),
 	/** Timestamp when the session was created */
 	createdAt: timestamp("created_at").notNull().default(now()),
 	/** Timestamp when the session expires */
