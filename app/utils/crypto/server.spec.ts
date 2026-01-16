@@ -1,6 +1,12 @@
 import { describe, expect, it } from "bun:test";
 import { setTimeout } from "node:timers/promises";
-import { generateSecureToken, generateUuidv7, hashToken } from "./server";
+import {
+	generateSalt,
+	generateSecureToken,
+	generateUuidv7,
+	hashPassword,
+	hashToken,
+} from "./server";
 
 describe("generateUuidv7", () => {
 	it("should generate a valid UUIDv7 format", () => {
@@ -132,3 +138,103 @@ describe("hashToken", () => {
 		expect(hash.length).toBe(64);
 	});
 });
+
+describe("generateSalt", () => {
+	it("should generate a salt with default length (32 bytes)", () => {
+		const salt = generateSalt();
+		const decoded = Buffer.from(salt, "hex");
+
+		expect(decoded.length).toBe(32);
+	});
+
+	it("should generate a salt with custom byte length", () => {
+		const bytes = 16;
+		const salt = generateSalt(bytes);
+		const decoded = Buffer.from(salt, "hex");
+
+		expect(decoded.length).toBe(bytes);
+	});
+
+	it("should only contain hexadecimal characters", () => {
+		const salt = generateSalt();
+
+		expect(salt).toMatch(/^[0-9a-f]+$/);
+	});
+
+	it("should generate unique salts", () => {
+		const salt1 = generateSalt();
+		const salt2 = generateSalt();
+
+		expect(salt1).not.toBe(salt2);
+	});
+
+	it("should generate salts of expected hex string length", () => {
+		const bytes = 16;
+		const salt = generateSalt(bytes);
+
+		// 16 bytes = 32 hex characters
+		expect(salt.length).toBe(bytes * 2);
+	});
+});
+
+describe("hashPassword", () => {
+	it("should produce consistent hashes for the same password and salt", () => {
+		const password = "myPassword123";
+		const salt = generateSalt();
+		const hash1 = hashPassword(password, salt);
+		const hash2 = hashPassword(password, salt);
+
+		expect(hash1).toBe(hash2);
+	});
+
+	it("should produce different hashes for different passwords", () => {
+		const salt = generateSalt();
+		const hash1 = hashPassword("password1", salt);
+		const hash2 = hashPassword("password2", salt);
+
+		expect(hash1).not.toBe(hash2);
+	});
+
+	it("should produce different hashes for different salts", () => {
+		const password = "myPassword123";
+		const salt1 = generateSalt();
+		const salt2 = generateSalt();
+		const hash1 = hashPassword(password, salt1);
+		const hash2 = hashPassword(password, salt2);
+
+		expect(hash1).not.toBe(hash2);
+	});
+
+	it("should produce SHA-256 hash (64 hex characters)", () => {
+		const password = "myPassword123";
+		const salt = generateSalt();
+		const hash = hashPassword(password, salt);
+
+		expect(hash.length).toBe(64);
+	});
+
+	it("should only contain hexadecimal characters", () => {
+		const password = "myPassword123";
+		const salt = generateSalt();
+		const hash = hashPassword(password, salt);
+
+		expect(hash).toMatch(/^[0-9a-f]+$/);
+	});
+
+	it("should handle empty password", () => {
+		const salt = generateSalt();
+		const hash = hashPassword("", salt);
+
+		expect(hash.length).toBe(64);
+	});
+
+	it("should handle special characters in password", () => {
+		const password = "p@ssw0rd!#$%^&*()";
+		const salt = generateSalt();
+		const hash = hashPassword(password, salt);
+
+		expect(hash.length).toBe(64);
+		expect(hash).toMatch(/^[0-9a-f]+$/);
+	});
+});
+
