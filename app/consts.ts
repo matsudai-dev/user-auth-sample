@@ -1,6 +1,7 @@
 export const OK = "OK";
 export const BAD_REQUEST = "Bad Request";
 export const UNAUTHORIZED = "Unauthorized";
+export const NOT_FOUND = "Not Found";
 export const CONFLICT = "Conflict";
 export const GONE = "Gone";
 export const TOO_MANY_REQUESTS = "Too Many Requests";

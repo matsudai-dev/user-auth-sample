@@ -1,5 +1,6 @@
 import { hc } from "hono/client";
 import apiV1Login from "@/routes/api/v1/login";
+import apiV1LoginMfaTotp from "@/routes/api/v1/login/mfa/totp";
 import apiV1Signup from "@/routes/api/v1/signup";
 import apiV1SignupComplete from "@/routes/api/v1/signup/complete";
 import { createHonoApp } from "@/utils/factory/hono";
@@ -7,7 +8,8 @@ import { createHonoApp } from "@/utils/factory/hono";
 export const apiRoutes = createHonoApp()
 	.route("/api/v1/signup", apiV1Signup)
 	.route("/api/v1/signup/complete", apiV1SignupComplete)
-	.route("/api/v1/login", apiV1Login);
+	.route("/api/v1/login", apiV1Login)
+	.route("/api/v1/login/mfa/totp", apiV1LoginMfaTotp);
 
 export const api = hc<typeof apiRoutes>("/", {
 	init: {
