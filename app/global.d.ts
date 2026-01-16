@@ -19,7 +19,8 @@ declare module "hono" {
 			DB: D1Database;
 			RESEND_API_KEY: string;
 			RESEND_EMAIL_FROM: string;
-			JWT_SECRET: string;
+			ACCESS_TOKEN_SECRET_KEY: string;
+			REFRESH_TOKEN_SECRET_KEY: string;
 		} & NodeJS.ProcessEnv;
 	}
 }
