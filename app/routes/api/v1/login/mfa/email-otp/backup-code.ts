@@ -23,7 +23,7 @@ const jsonValidator = sValidator(
 	"json",
 	z.object({
 		mfaEmailOtpLoginSessionToken: z.string().min(1),
-		code: z.string().min(1),
+		backupCode: z.string().min(1),
 	}),
 	async (result, c) => {
 		if (!result.success) {
@@ -37,7 +37,7 @@ export const route = createHonoApp().post(
 	jsonValidator,
 	injectExternalErrors,
 	async (c) => {
-		const { mfaEmailOtpLoginSessionToken, code } = c.req.valid("json");
+		const { mfaEmailOtpLoginSessionToken, backupCode } = c.req.valid("json");
 
 		const db = getDBClient(c.env.DB);
 
@@ -74,9 +74,9 @@ export const route = createHonoApp().post(
 			return c.text(NOT_FOUND, 404);
 		}
 
-		const codeHash = hashToken(code);
+		const codeHash = hashToken(backupCode);
 
-		const backupCode = await db
+		const existingbackupCode = await db
 			.select()
 			.from(mfaEmailOtpBackupCodesTable)
 			.where(
@@ -87,7 +87,7 @@ export const route = createHonoApp().post(
 			)
 			.get();
 
-		if (!backupCode || backupCode.usedAt) {
+		if (!existingbackupCode || existingbackupCode.usedAt) {
 			return c.text(UNAUTHORIZED, 401);
 		}
 
@@ -96,7 +96,7 @@ export const route = createHonoApp().post(
 			.set({
 				usedAt: now,
 			})
-			.where(eq(mfaEmailOtpBackupCodesTable.id, backupCode.id));
+			.where(eq(mfaEmailOtpBackupCodesTable.id, existingbackupCode.id));
 
 		const accessToken = await generateAccessToken(
 			user.id,

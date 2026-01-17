@@ -67,7 +67,7 @@ describe("POST /api/v1/login/mfa/totp - Error cases", () => {
 		const response = await api.v1.login.mfa.totp.$post({
 			json: {
 				mfaTotpLoginSessionToken: "invalid-token",
-				code: "123456",
+				totpCode: "123456",
 			},
 		});
 
@@ -96,7 +96,7 @@ describe("POST /api/v1/login/mfa/totp - Error cases", () => {
 		const response = await api.v1.login.mfa.totp.$post({
 			json: {
 				mfaTotpLoginSessionToken: "valid-token",
-				code: "123456",
+				totpCode: "123456",
 			},
 		});
 
@@ -131,7 +131,7 @@ describe("POST /api/v1/login/mfa/totp - Error cases", () => {
 		const response = await api.v1.login.mfa.totp.$post({
 			json: {
 				mfaTotpLoginSessionToken: "valid-token",
-				code: "123456",
+				totpCode: "123456",
 			},
 		});
 
@@ -170,7 +170,7 @@ describe("POST /api/v1/login/mfa/totp - Error cases", () => {
 		const response = await api.v1.login.mfa.totp.$post({
 			json: {
 				mfaTotpLoginSessionToken: "valid-token",
-				code: "123456",
+				totpCode: "123456",
 			},
 		});
 
@@ -211,7 +211,7 @@ describe("POST /api/v1/login/mfa/totp - Error cases", () => {
 		const response = await api.v1.login.mfa.totp.$post({
 			json: {
 				mfaTotpLoginSessionToken: "valid-token",
-				code: "000000",
+				totpCode: "000000",
 			},
 		});
 
@@ -222,7 +222,7 @@ describe("POST /api/v1/login/mfa/totp - Error cases", () => {
 		const response = await api.v1.login.mfa.totp.$post({
 			json: {
 				mfaTotpLoginSessionToken: "valid-token",
-				code: "12345",
+				totpCode: "12345",
 			},
 		});
 
@@ -271,7 +271,7 @@ describe("POST /api/v1/login/mfa/totp - Success cases", () => {
 		const response = await api.v1.login.mfa.totp.$post({
 			json: {
 				mfaTotpLoginSessionToken: "valid-token",
-				code: "123456",
+				totpCode: "123456",
 			},
 		});
 
@@ -328,7 +328,7 @@ describe("POST /api/v1/login/mfa/totp - Success cases", () => {
 		const response = await api.v1.login.mfa.totp.$post({
 			json: {
 				mfaTotpLoginSessionToken: "valid-token",
-				code: "123456",
+				totpCode: "123456",
 			},
 		});
 

@@ -23,7 +23,7 @@ const jsonValidator = sValidator(
 	"json",
 	z.object({
 		mfaTotpLoginSessionToken: z.string().min(1),
-		code: z.string().regex(/^\d{6}$/),
+		totpCode: z.string().regex(/^\d{6}$/),
 	}),
 	async (result, c) => {
 		if (!result.success) {
@@ -37,7 +37,7 @@ export const route = createHonoApp().post(
 	jsonValidator,
 	injectExternalErrors,
 	async (c) => {
-		const { mfaTotpLoginSessionToken, code } = c.req.valid("json");
+		const { mfaTotpLoginSessionToken, totpCode } = c.req.valid("json");
 
 		const db = getDBClient(c.env.DB);
 
@@ -75,7 +75,7 @@ export const route = createHonoApp().post(
 			return c.text(UNAUTHORIZED, 401);
 		}
 
-		const isValid = verifyTotpCode(code, user.mfaTotpSecret);
+		const isValid = verifyTotpCode(totpCode, user.mfaTotpSecret);
 
 		if (!isValid) {
 			return c.text(UNAUTHORIZED, 401);

@@ -59,7 +59,7 @@ describe("POST /api/v1/login/mfa/email-otp/backup-code - Error cases", () => {
 		const response = await api.v1.login.mfa["email-otp"]["backup-code"].$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "invalid-token",
-				code: "backup-code",
+				backupCode: "backup-code",
 			},
 		});
 
@@ -88,7 +88,7 @@ describe("POST /api/v1/login/mfa/email-otp/backup-code - Error cases", () => {
 		const response = await api.v1.login.mfa["email-otp"]["backup-code"].$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
-				code: "backup-code",
+				backupCode: "backup-code",
 			},
 		});
 
@@ -123,7 +123,7 @@ describe("POST /api/v1/login/mfa/email-otp/backup-code - Error cases", () => {
 		const response = await api.v1.login.mfa["email-otp"]["backup-code"].$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
-				code: "backup-code",
+				backupCode: "backup-code",
 			},
 		});
 
@@ -164,7 +164,7 @@ describe("POST /api/v1/login/mfa/email-otp/backup-code - Error cases", () => {
 		const response = await api.v1.login.mfa["email-otp"]["backup-code"].$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
-				code: "invalid-backup-code",
+				backupCode: "invalid-backup-code",
 			},
 		});
 
@@ -210,7 +210,7 @@ describe("POST /api/v1/login/mfa/email-otp/backup-code - Error cases", () => {
 		const response = await api.v1.login.mfa["email-otp"]["backup-code"].$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
-				code: "used-backup-code",
+				backupCode: "used-backup-code",
 			},
 		});
 
@@ -221,7 +221,7 @@ describe("POST /api/v1/login/mfa/email-otp/backup-code - Error cases", () => {
 		const response = await api.v1.login.mfa["email-otp"]["backup-code"].$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
-				code: "",
+				backupCode: "",
 			},
 		});
 
@@ -232,7 +232,7 @@ describe("POST /api/v1/login/mfa/email-otp/backup-code - Error cases", () => {
 		const response = await api.v1.login.mfa["email-otp"]["backup-code"].$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "",
-				code: "backup-code",
+				backupCode: "backup-code",
 			},
 		});
 
@@ -297,7 +297,7 @@ describe("POST /api/v1/login/mfa/email-otp/backup-code - Success cases", () => {
 		const response = await api.v1.login.mfa["email-otp"]["backup-code"].$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
-				code: "backup-code",
+				backupCode: "backup-code",
 			},
 		});
 
@@ -371,7 +371,7 @@ describe("POST /api/v1/login/mfa/email-otp/backup-code - Success cases", () => {
 		const response = await api.v1.login.mfa["email-otp"]["backup-code"].$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
-				code: "backup-code",
+				backupCode: "backup-code",
 			},
 		});
 

@@ -432,7 +432,7 @@ interface Cookie {
     - セッションが有効期限切れの場合は `410 Gone` を返却
 2. セッションから `user_id` を取得してユーザー情報を検索
     - ユーザーが存在しない場合は `404 Not Found` を返却
-3. `request.code` のバリデーション
+3. `request.totpCode` のバリデーション
     - 6桁の数字でない場合は `400 Bad Request` を返却
 4. ユーザーの `mfa_totp_secret` を使用してTOTPコードを検証
     - コードが不正な場合は `401 Unauthorized` を返却
@@ -471,7 +471,7 @@ interface Cookie {
 2. セッションから `user_id` を取得してユーザー情報を検索
     - ユーザーが存在しない場合は `404 Not Found` を返却
 3. `mfa_totp_backup_codes` からユーザーのバックアップコードを検索
-4. `request.code` をハッシュ化して `backup_code_hash` と照合
+4. `request.backupCode` をハッシュ化して `backup_code_hash` と照合
     - 一致するコードが存在しない場合は `401 Unauthorized` を返却
     - 既に使用済み（`used_at IS NOT NULL`）の場合は `401 Unauthorized` を返却
 5. バックアップコードを使用済みとしてマーク:
@@ -535,9 +535,9 @@ interface Cookie {
     - セッションが有効期限切れの場合は `410 Gone` を返却
 2. セッションから `user_id` を取得してユーザー情報を検索
     - ユーザーが存在しない場合は `404 Not Found` を返却
-3. `request.code` のバリデーション
+3. `request.otpCode` のバリデーション
     - 6桁の数字でない場合は `400 Bad Request` を返却
-4. Email OTPコードを検証（`request.code` をハッシュ化してセッションの `otp_code_hash` と照合）
+4. Email OTPコードを検証（`request.otpCode` をハッシュ化してセッションの `otp_code_hash` と照合）
     - コードが不正な場合は `401 Unauthorized` を返却
 5. アクセストークン（JWT、有効期限15分）を生成してクッキーに設定
     - `sub` : `users.id`
@@ -574,7 +574,7 @@ interface Cookie {
 2. セッションから `user_id` を取得してユーザー情報を検索
     - ユーザーが存在しない場合は `404 Not Found` を返却
 3. `mfa_email_otp_backup_codes` からユーザーのバックアップコードを検索
-4. `request.code` をハッシュ化して `backup_code_hash` と照合
+4. `request.backupCode` をハッシュ化して `backup_code_hash` と照合
     - 一致するコードが存在しない場合は `401 Unauthorized` を返却
     - 既に使用済み（`used_at IS NOT NULL`）の場合は `401 Unauthorized` を返却
 5. バックアップコードを使用済みとしてマーク:
@@ -807,7 +807,7 @@ interface Response {
     - セッションが存在しない場合は `401 Unauthorized` を返却
     - セッションが有効期限切れの場合は `410 Gone` を返却
     - セッションの `user_id` が現在のユーザーIDと一致しない場合は `403 Forbidden` を返却
-4. TOTPコードを検証（`request.code` とセッションの `totp_secret` を使用）
+4. TOTPコードを検証（`request.totpCode` とセッションの `totp_secret` を使用）
     - コードが不正な場合は `401 Unauthorized` を返却
 5. バックアップコードを生成（10個のランダム文字列）
 6. トランザクション開始
@@ -968,7 +968,7 @@ interface Response {
     - セッションが存在しない場合は `401 Unauthorized` を返却
     - セッションが有効期限切れの場合は `410 Gone` を返却
     - セッションの `user_id` が現在のユーザーIDと一致しない場合は `403 Forbidden` を返却
-4. Email OTPコードを検証（`request.code` をハッシュ化してセッションの `otp_code_hash` と照合）
+4. Email OTPコードを検証（`request.otpCode` をハッシュ化してセッションの `otp_code_hash` と照合）
     - コードが不正な場合は `401 Unauthorized` を返却
 5. バックアップコードを生成（10個のランダム文字列）
 6. トランザクション開始
@@ -1033,7 +1033,7 @@ interface Response {
     - セッションが存在しない場合は `401 Unauthorized` を返却
     - セッションが有効期限切れの場合は `410 Gone` を返却
     - セッションの `user_id` が現在のユーザーIDと一致しない場合は `403 Forbidden` を返却
-4. Email OTPコードを検証（`request.code` をハッシュ化してセッションの `otp_code_hash` と照合）
+4. Email OTPコードを検証（`request.otpCode` をハッシュ化してセッションの `otp_code_hash` と照合）
     - コードが不正な場合は `401 Unauthorized` を返却
 5. トランザクション開始
     - `users` テーブルを更新
