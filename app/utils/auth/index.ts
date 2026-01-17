@@ -1,12 +1,22 @@
 import type { Context, Env } from "hono";
-import { setSignedCookie } from "hono/cookie";
-import { sign } from "hono/jwt";
+import { deleteCookie, getSignedCookie, setSignedCookie } from "hono/cookie";
+import { sign, verify } from "hono/jwt";
+import type { JWTPayload } from "hono/utils/jwt/types";
 import {
 	ACCESS_TOKEN_EXPIRATION_MS,
 	REFRESH_TOKEN_EXPIRATION_MS,
 } from "@/consts";
 import { generateSecureToken, hashToken } from "@/utils/crypto/server";
 import { offsetMilliSeconds } from "@/utils/date";
+
+/** JWT signature algorithm */
+const SIGNATURE_ALGORITHM = "HS256";
+
+/** Access token cookie name */
+const ACCESS_TOKEN_NAME = "access_token";
+
+/** Refresh token cookie name */
+const REFRESH_TOKEN_NAME = "refresh_token";
 
 /**
  * Generates a JWT access token.
@@ -30,6 +40,7 @@ export async function generateAccessToken(
 			exp: Math.floor(expireAt.getTime() / 1000),
 		},
 		jwtSecret,
+		SIGNATURE_ALGORITHM,
 	);
 }
 
@@ -68,7 +79,7 @@ export async function setAccessTokenInCookie(
 
 	await setSignedCookie(
 		c,
-		"access_token",
+		ACCESS_TOKEN_NAME,
 		token,
 		c.env.ACCESS_TOKEN_SECRET_KEY,
 		{
@@ -97,7 +108,7 @@ export async function setRefreshTokenInCookie(
 
 	await setSignedCookie(
 		c,
-		"refresh_token",
+		REFRESH_TOKEN_NAME,
 		token,
 		c.env.REFRESH_TOKEN_SECRET_KEY,
 		{
@@ -108,4 +119,72 @@ export async function setRefreshTokenInCookie(
 			path: "/",
 		},
 	);
+}
+
+export async function getUserIdFromAccessTokenCookie(
+	c: Context<Env>,
+): Promise<string | undefined> {
+	const accessToken = await getSignedCookie(
+		c,
+		c.env.ACCESS_TOKEN_SECRET_KEY,
+		ACCESS_TOKEN_NAME,
+	);
+
+	if (!accessToken) {
+		return undefined;
+	}
+
+	let jwt: JWTPayload | undefined;
+
+	try {
+		jwt = await verify(
+			accessToken,
+			c.env.ACCESS_TOKEN_SECRET_KEY,
+			SIGNATURE_ALGORITHM,
+		);
+	} catch {
+		return undefined;
+	}
+
+	const userId = jwt.sub;
+
+	if (typeof userId !== "string") {
+		return undefined;
+	}
+
+	return userId;
+}
+
+export async function getRefreshTokenFromCookie(
+	c: Context<Env>,
+): Promise<string | undefined> {
+	const refreshToken = await getSignedCookie(
+		c,
+		c.env.REFRESH_TOKEN_SECRET_KEY,
+		REFRESH_TOKEN_NAME,
+	);
+
+	if (!refreshToken) {
+		return undefined;
+	}
+
+	return refreshToken;
+}
+
+/**
+ * Deletes access token cookie.
+ *
+ * @param c - Hono context
+ */
+export function deleteAccessTokenCookie(c: Context<Env>): void {
+	deleteCookie(c, ACCESS_TOKEN_NAME);
+}
+
+/**
+ * Deletes refresh token cookie.
+ *
+ * @param c - Hono context
+ */
+export function deleteRefreshTokenCookie(c: Context<Env>): void {
+	deleteCookie(c, REFRESH_TOKEN_NAME);
 }
