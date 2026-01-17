@@ -53,7 +53,7 @@ describe("POST /api/v1/login/mfa/email-otp - Error cases", () => {
 			}),
 		});
 
-		const response = await api.v1.login.mfa["email-otp"].$post({
+		const response = await api.v1.login.mfa["email-otp"].send.$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "invalid-token",
 			},
@@ -82,7 +82,7 @@ describe("POST /api/v1/login/mfa/email-otp - Error cases", () => {
 			}),
 		});
 
-		const response = await api.v1.login.mfa["email-otp"].$post({
+		const response = await api.v1.login.mfa["email-otp"].send.$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
 			},
@@ -117,7 +117,7 @@ describe("POST /api/v1/login/mfa/email-otp - Error cases", () => {
 			}),
 		});
 
-		const response = await api.v1.login.mfa["email-otp"].$post({
+		const response = await api.v1.login.mfa["email-otp"].send.$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
 			},
@@ -127,7 +127,7 @@ describe("POST /api/v1/login/mfa/email-otp - Error cases", () => {
 	});
 
 	it("should return 400 when mfaEmailOtpLoginSessionToken is empty", async () => {
-		const response = await api.v1.login.mfa["email-otp"].$post({
+		const response = await api.v1.login.mfa["email-otp"].send.$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "",
 			},
@@ -184,7 +184,7 @@ describe("POST /api/v1/login/mfa/email-otp - Success cases", () => {
 			}),
 		});
 
-		const response = await api.v1.login.mfa["email-otp"].$post({
+		const response = await api.v1.login.mfa["email-otp"].send.$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
 			},

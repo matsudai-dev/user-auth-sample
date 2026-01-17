@@ -487,7 +487,7 @@ interface Cookie {
 
 [目次に戻る](#目次)
 
-### `POST /api/v1/login/mfa/email-otp`
+### `POST /api/v1/login/mfa/email-otp/send`
 
 ```ts
 interface Request {
@@ -512,7 +512,7 @@ interface Response {
 
 [目次に戻る](#目次)
 
-### `POST /api/v1/login/mfa/email-otp/complete`
+### `POST /api/v1/login/mfa/email-otp`
 
 ```ts
 interface Request {
