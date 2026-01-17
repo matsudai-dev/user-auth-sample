@@ -414,7 +414,7 @@ interface Cookie {
 ```ts
 interface Request {
   mfaTotpLoginSessionToken: string;
-  code: string;
+  totpCode: string;
 }
 
 interface Response {
@@ -452,7 +452,7 @@ interface Cookie {
 ```ts
 interface Request {
   mfaTotpLoginSessionToken: string;
-  code: string;
+  backupCode: string;
 }
 
 interface Response {
@@ -512,12 +512,50 @@ interface Response {
 
 [目次に戻る](#目次)
 
+### `POST /api/v1/login/mfa/email-otp/complete`
+
+```ts
+interface Request {
+  mfaEmailOtpLoginSessionToken: string;
+  otpCode: string;
+}
+
+interface Response {
+  // なし
+}
+
+interface Cookie {
+  access_token: string;
+  refresh_token?: string;
+}
+```
+
+1. `request.mfaEmailOtpLoginSessionToken` のハッシュ値で `mfa_email_otp_login_sessions` を検索
+    - セッションが存在しない場合は `401 Unauthorized` を返却
+    - セッションが有効期限切れの場合は `410 Gone` を返却
+2. セッションから `user_id` を取得してユーザー情報を検索
+    - ユーザーが存在しない場合は `404 Not Found` を返却
+3. `request.code` のバリデーション
+    - 6桁の数字でない場合は `400 Bad Request` を返却
+4. Email OTPコードを検証（`request.code` をハッシュ化してセッションの `otp_code_hash` と照合）
+    - コードが不正な場合は `401 Unauthorized` を返却
+5. アクセストークン（JWT、有効期限15分）を生成してクッキーに設定
+    - `sub` : `users.id`
+6. セッションの `remember_me` が `true` の場合:
+    - リフレッシュトークンを生成
+    - `login_sessions` にレコードを作成（有効期限31日）
+    - リフレッシュトークンをクッキーに設定
+7. `mfa_email_otp_login_sessions` からレコードを削除
+8. `200 OK` を返却
+
+[目次に戻る](#目次)
+
 ### `POST /api/v1/login/mfa/email-otp/backup-code`
 
 ```ts
 interface Request {
   mfaEmailOtpLoginSessionToken: string;
-  code: string;
+  backupCode: string;
 }
 
 interface Response {
@@ -549,44 +587,6 @@ interface Cookie {
     - リフレッシュトークンをクッキーに設定
 8. `mfa_email_otp_login_sessions` からレコードを削除
 9. `200 OK` を返却
-
-[目次に戻る](#目次)
-
-### `POST /api/v1/login/mfa/email-otp/complete`
-
-```ts
-interface Request {
-  mfaEmailOtpLoginSessionToken: string;
-  code: string;
-}
-
-interface Response {
-  // なし
-}
-
-interface Cookie {
-  access_token: string;
-  refresh_token?: string;
-}
-```
-
-1. `request.mfaEmailOtpLoginSessionToken` のハッシュ値で `mfa_email_otp_login_sessions` を検索
-    - セッションが存在しない場合は `401 Unauthorized` を返却
-    - セッションが有効期限切れの場合は `410 Gone` を返却
-2. セッションから `user_id` を取得してユーザー情報を検索
-    - ユーザーが存在しない場合は `404 Not Found` を返却
-3. `request.code` のバリデーション
-    - 6桁の数字でない場合は `400 Bad Request` を返却
-4. Email OTPコードを検証（`request.code` をハッシュ化してセッションの `otp_code_hash` と照合）
-    - コードが不正な場合は `401 Unauthorized` を返却
-5. アクセストークン（JWT、有効期限15分）を生成してクッキーに設定
-    - `sub` : `users.id`
-6. セッションの `remember_me` が `true` の場合:
-    - リフレッシュトークンを生成
-    - `login_sessions` にレコードを作成（有効期限31日）
-    - リフレッシュトークンをクッキーに設定
-7. `mfa_email_otp_login_sessions` からレコードを削除
-8. `200 OK` を返却
 
 [目次に戻る](#目次)
 
@@ -793,7 +793,7 @@ interface Response {
 ```ts
 interface Request {
   mfaTotpEnableSessionToken: string;
-  code: string;
+  totpCode: string;
 }
 
 interface Response {
@@ -827,7 +827,7 @@ interface Response {
 ```ts
 interface Request {
   password: string;
-  code: string;
+  totpCode: string;
 }
 
 interface Response {
@@ -954,7 +954,7 @@ interface Response {
 ```ts
 interface Request {
   mfaEmailOtpEnableSessionToken: string;
-  code: string;
+  otpCode: string;
 }
 
 interface Response {
@@ -1019,7 +1019,7 @@ interface Response {
 ```ts
 interface Request {
   mfaEmailOtpDisableSessionToken: string;
-  code: string;
+  otpCode: string;
 }
 
 interface Response {
