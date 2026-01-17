@@ -35,6 +35,10 @@ mock.module("@/utils/auth", () => ({
 	}),
 	setAccessTokenInCookie: mockSetAccessTokenInCookie,
 	setRefreshTokenInCookie: mockSetRefreshTokenInCookie,
+	getUserIdFromAccessTokenCookie: mock(() => Promise.resolve()),
+	getRefreshTokenFromCookie: mock(() => Promise.resolve()),
+	deleteAccessTokenCookie: mock(() => {}),
+	deleteRefreshTokenCookie: mock(() => {}),
 }));
 
 const { apiRoutes } = await import("@/utils/api/client");
