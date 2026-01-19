@@ -26,7 +26,7 @@ import { createHonoApp } from "@/utils/factory/hono";
 const jsonValidator = sValidator(
 	"json",
 	z.object({
-		email: z.string().email(),
+		email: z.email(),
 	}),
 	async (result, c) => {
 		if (!result.success) {
