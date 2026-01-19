@@ -59,7 +59,7 @@ beforeEach(() => {
 
 describe("POST /api/v1/password-reset - Error cases", () => {
 	it("should return 400 when email is invalid", async () => {
-		const response = await api.v1["password-reset"].$post({
+		const response = await api.v1["password-reset"].send.$post({
 			json: {
 				email: "invalid-email",
 			},
@@ -86,7 +86,7 @@ describe("POST /api/v1/password-reset - Error cases", () => {
 			}),
 		});
 
-		const response = await api.v1["password-reset"].$post({
+		const response = await api.v1["password-reset"].send.$post({
 			json: {
 				email: "test@example.com",
 			},
@@ -122,7 +122,7 @@ describe("POST /api/v1/password-reset - Success cases", () => {
 			}),
 		});
 
-		const response = await api.v1["password-reset"].$post({
+		const response = await api.v1["password-reset"].send.$post({
 			json: {
 				email: "nonexistent@example.com",
 			},
@@ -224,7 +224,7 @@ describe("POST /api/v1/password-reset - Success cases", () => {
 			}),
 		});
 
-		const response = await api.v1["password-reset"].$post({
+		const response = await api.v1["password-reset"].send.$post({
 			json: {
 				email: "test@example.com",
 			},
@@ -283,7 +283,7 @@ describe("POST /api/v1/password-reset - Success cases", () => {
 			}),
 		});
 
-		const response = await api.v1["password-reset"].$post({
+		const response = await api.v1["password-reset"].send.$post({
 			json: {
 				email: "test@example.com",
 			},
