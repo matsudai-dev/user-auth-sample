@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { testClient } from "hono/testing";
+import { hashToken } from "@/utils/crypto/server";
 
 const mockGetDBClient = mock(() => ({}));
 
@@ -202,6 +203,9 @@ describe("POST /api/v1/login/mfa/email-otp - Success cases", () => {
 	it("should login successfully without rememberMe", async () => {
 		const futureDate = new Date(Date.now() + 86400000); // +1 day
 
+		const otpCode = "123456";
+		const otpCodeHash = hashToken(otpCode);
+
 		let callCount = 0;
 		let deletedSession = false;
 
@@ -215,8 +219,7 @@ describe("POST /api/v1/login/mfa/email-otp - Success cases", () => {
 								return Promise.resolve({
 									userId: "user-id",
 									mfaEmailOtpLoginSessionTokenHash: "hash",
-									otpCodeHash:
-										"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", // hash of "123456"
+									otpCodeHash,
 									rememberMe: false,
 									expireAt: futureDate,
 								});
@@ -240,7 +243,7 @@ describe("POST /api/v1/login/mfa/email-otp - Success cases", () => {
 		const response = await api.v1.login.mfa["email-otp"].$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
-				otpCode: "123456",
+				otpCode,
 			},
 		});
 
@@ -252,6 +255,9 @@ describe("POST /api/v1/login/mfa/email-otp - Success cases", () => {
 
 	it("should login successfully with rememberMe", async () => {
 		const futureDate = new Date(Date.now() + 86400000); // +1 day
+
+		const otpCode = "123456";
+		const otpCodeHash = hashToken(otpCode);
 
 		let callCount = 0;
 		let insertedLoginSession = false;
@@ -267,8 +273,7 @@ describe("POST /api/v1/login/mfa/email-otp - Success cases", () => {
 								return Promise.resolve({
 									userId: "user-id",
 									mfaEmailOtpLoginSessionTokenHash: "hash",
-									otpCodeHash:
-										"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", // hash of "123456"
+									otpCodeHash,
 									rememberMe: true,
 									expireAt: futureDate,
 								});
@@ -298,7 +303,7 @@ describe("POST /api/v1/login/mfa/email-otp - Success cases", () => {
 		const response = await api.v1.login.mfa["email-otp"].$post({
 			json: {
 				mfaEmailOtpLoginSessionToken: "valid-token",
-				otpCode: "123456",
+				otpCode,
 			},
 		});
 
