@@ -648,7 +648,7 @@ interface Response {
 
 ```ts
 interface Request {
-  token: string;
+  passwordResetToken: string;
   newPassword: string;
 }
 
@@ -657,7 +657,7 @@ interface Response {
 }
 ```
 
-1. `request.token` のハッシュ値で `password_reset_sessions.password_reset_token_hash` を検索
+1. `request.passwordResetToken` のハッシュ値で `password_reset_sessions.password_reset_token_hash` を検索
     - セッションが存在しない場合は `401 Unauthorized` を返却
     - セッションが有効期限切れの場合は `410 Gone` を返却
 2. 新しいパスワードのバリデーション
