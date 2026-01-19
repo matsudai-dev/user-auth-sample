@@ -19,12 +19,12 @@
     - [`POST /api/v1/login`](#post-apiv1login) - ログイン（メール・パスワード）
     - [`POST /api/v1/login/mfa/totp`](#post-apiv1loginmfatotp) - TOTPコード認証
     - [`POST /api/v1/login/mfa/totp/backup-code`](#post-apiv1loginmfatotpbackup-code) - TOTPバックアップコード認証
-    - [`POST /api/v1/login/mfa/email-otp`](#post-apiv1loginmfaemail-otp) - Email OTPコード送信
+    - [`POST /api/v1/login/mfa/email-otp/send`](#post-apiv1loginmfaemail-otpsend) - Email OTPコード送信
+    - [`POST /api/v1/login/mfa/email-otp`](#post-apiv1loginmfaemail-otp) - Email OTPコード認証
     - [`POST /api/v1/login/mfa/email-otp/backup-code`](#post-apiv1loginmfaemail-otpbackup-code) - Email OTPバックアップコード認証
-    - [`POST /api/v1/login/mfa/email-otp/complete`](#post-apiv1loginmfaemail-otpcomplete) - Email OTPコード認証
     - [`POST /api/v1/logout`](#post-apiv1logout) - ログアウト
-    - [`POST /api/v1/password-reset`](#post-apiv1password-reset) - パスワードリセット申請
-    - [`POST /api/v1/password-reset/complete`](#post-apiv1password-resetcomplete) - パスワードリセット完了
+    - [`POST /api/v1/password-reset/send`](#post-apiv1password-resetsend) - パスワードリセット申請
+    - [`POST /api/v1/password-reset`](#post-apiv1password-reset) - パスワードリセット完了
     - [`POST /api/v1/password-change`](#post-apiv1userspassword-change) - パスワード変更
     - [`POST /api/v1/email-change`](#post-apiv1usersemail-change) - メールアドレス変更申請
     - [`POST /api/v1/email-change/complete`](#post-apiv1usersemail-changecomplete) - メールアドレス変更完了
@@ -612,7 +612,7 @@ interface Response {
 
 [目次に戻る](#目次)
 
-### `POST /api/v1/password-reset`
+### `POST /api/v1/password-reset/send`
 
 ```ts
 interface Request {
@@ -636,7 +636,7 @@ interface Response {
 
 [目次に戻る](#目次)
 
-### `POST /api/v1/password-reset/complete`
+### `POST /api/v1/password-reset`
 
 ```ts
 interface Request {
@@ -1270,7 +1270,8 @@ interface Response {
 - `expire_at`
 
 ### `password_reset_sessions`
-- `email`
+- `id` : UUIDv7
+- `user_id` -> `users.id`
 - `password_reset_token_hash`
 - `created_at`
 - `expire_at`
