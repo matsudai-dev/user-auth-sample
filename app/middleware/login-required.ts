@@ -14,7 +14,7 @@ import {
 } from "@/utils/auth";
 import { hashToken } from "@/utils/crypto/server";
 
-export const injectExternalErrors = createMiddleware<Env>(async (c, next) => {
+export const loginRequired = createMiddleware<Env>(async (c, next) => {
 	const userId = await getUserIdFromAccessTokenCookie(c);
 
 	if (userId) {
