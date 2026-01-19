@@ -82,13 +82,30 @@ export const loginSessionsTable = sqliteTable("login_sessions", {
 export const passwordResetSessionsTable = sqliteTable(
 	"password_reset_sessions",
 	{
-		/** Email address for password reset */
-		email: text("email").primaryKey(),
+		/** UUIDv7 */
+		id: text("id").primaryKey(),
+		/** Reference to users.id */
+		userId: text("user_id")
+			.primaryKey()
+			.references(() => usersTable.id),
 		/** Hashed password reset token */
 		passwordResetTokenHash: text("password_reset_token_hash").notNull(),
 		/** Timestamp when the session was created */
 		createdAt: timestamp("created_at").notNull().default(now()),
 		/** Timestamp when the session expires */
+		expireAt: timestamp("expire_at").notNull(),
+	},
+);
+
+/** `password_reset_rate_limits` table schema definition */
+export const passwordResetRateLimitsTable = sqliteTable(
+	"password_reset_rate_limits",
+	{
+		/** Email address (not a foreign key) */
+		email: text("email").primaryKey(),
+		/** Timestamp when the last request was made */
+		lastRequestAt: timestamp("last_request_at").notNull().default(now()),
+		/** Timestamp when the rate limit expires */
 		expireAt: timestamp("expire_at").notNull(),
 	},
 );

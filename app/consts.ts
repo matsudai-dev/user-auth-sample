@@ -17,3 +17,6 @@ export const REFRESH_TOKEN_EXPIRATION_MS = 31 * 24 * 60 * 60 * 1000; // 31 days
 
 /** MFA login session expiration duration in milliseconds */
 export const MFA_LOGIN_SESSION_EXPIRATION_MS = 5 * 60 * 1000; // 5 minutes
+
+/** Password reset session expiration duration in milliseconds */
+export const PASSWORD_RESET_SESSION_EXPIRATION_MS = 60 * 60 * 1000; // 1 hour

@@ -626,12 +626,20 @@ interface Response {
 
 1. メールアドレスのバリデーション
     - メールアドレスが不正な場合は `400 Bad Request` を返却
-2. メールアドレスで `users` からユーザーを検索
-    - ユーザーが存在しない場合でも成功レスポンスを返却（セキュリティ上、ユーザーの存在を漏らさない）
-    - 有効期限内のパスワードリセットセッションがあれば `429 Too Many Requests` を返却
-3. `password_reset_token` （ランダム文字列）を生成
-4. `password_reset_sessions` にレコードを作成（有効期限: 1時間）
-5. リセット用URL（ `/password-reset/complete?token={password_reset_token}` ）をメール送信
+2. `password_reset_rate_limits` テーブルでレート制限を確認
+    - 該当メールアドレスの有効期限内のレコードが存在する場合は `429 Too Many Requests` を返却
+3. `password_reset_rate_limits` テーブルにレコードを作成または更新（有効期限: 1時間）
+    - `email`: リクエストされたメールアドレス
+    - `last_request_at`: 現在日時
+    - `expire_at`: 1時間後
+    - 既存レコードがある場合は `onConflictDoUpdate` で更新
+4. メールアドレスで `users` からユーザーを検索
+    - ユーザーが存在しない場合は `200 OK` を返却（セキュリティ上、ユーザーの存在を漏らさない）
+5. ユーザーが存在する場合のみ以降の処理を実行:
+    - `password_reset_sessions` から該当ユーザーの既存セッションを削除
+    - `password_reset_token` （ランダム文字列）を生成
+    - `password_reset_sessions` にレコードを作成（有効期限: 1時間）
+    - リセット用URL（ `/password-reset/complete?token={password_reset_token}` ）をメール送信
 6. `200 OK` を返却
 
 [目次に戻る](#目次)
@@ -1275,6 +1283,11 @@ interface Response {
 - `password_reset_token_hash`
 - `created_at`
 - `expire_at`
+
+### `password_reset_rate_limits`
+- `email` : メールアドレス（プライマリキー、外部キーではない）
+- `last_request_at` : 最後のリクエスト日時
+- `expire_at` : レート制限の有効期限
 
 ### `email_change_sessions`
 - `user_id` -> `users.id`
