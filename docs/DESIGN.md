@@ -48,7 +48,10 @@
   - [`deleted_users`](#deleted_users)
   - [`signup_sessions`](#signup_sessions)
   - [`login_sessions`](#login_sessions)
+  - [`login_rate_limits`](#login_rate_limits)
   - [`password_reset_sessions`](#password_reset_sessions)
+  - [`password_reset_rate_limits`](#password_reset_rate_limits)
+  - [`password_change_rate_limits`](#password_change_rate_limits)
   - [`email_change_sessions`](#email_change_sessions)
   - [`mfa_totp_enable_sessions`](#mfa_totp_enable_sessions)
   - [`mfa_email_otp_enable_sessions`](#mfa_email_otp_enable_sessions)
@@ -1277,6 +1280,12 @@ interface Response {
 - `last_accessed_at`
 - `expire_at`
 
+### `login_rate_limits`
+- `email`
+- `failed_attempts`
+- `locked_until`
+- `last_attempt_at`
+
 ### `password_reset_sessions`
 - `id` : UUIDv7
 - `user_id` -> `users.id`
@@ -1285,9 +1294,14 @@ interface Response {
 - `expire_at`
 
 ### `password_reset_rate_limits`
-- `email` : メールアドレス（プライマリキー、外部キーではない）
-- `last_request_at` : 最後のリクエスト日時
-- `expire_at` : レート制限の有効期限
+- `email`
+- `last_request_at`
+- `expire_at`
+
+### `password_change_rate_limits`
+- `user_id` -> `users.id`
+- `last_request_at`
+- `expire_at`
 
 ### `email_change_sessions`
 - `user_id` -> `users.id`

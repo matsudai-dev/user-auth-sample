@@ -4,7 +4,10 @@ import { z } from "zod";
 import {
 	BAD_REQUEST,
 	MFA_LOGIN_SESSION_EXPIRATION_MS,
+	TOO_MANY_REQUESTS,
 	UNAUTHORIZED,
+	LOGIN_RATE_LIMIT_MAX_ATTEMPTS,
+	LOGIN_RATE_LIMIT_LOCK_DURATION_MS,
 } from "@/consts";
 import { getDBClient } from "@/db/client";
 import {
@@ -12,6 +15,7 @@ import {
 	mfaEmailOtpLoginSessionsTable,
 	mfaTotpLoginSessionsTable,
 	usersTable,
+	loginRateLimitsTable,
 } from "@/db/schemas";
 import { injectExternalErrors } from "@/middleware/external-errors";
 import {
@@ -54,6 +58,18 @@ export const route = createHonoApp().post(
 
 		const db = getDBClient(c.env.DB);
 
+		const now = new Date();
+
+		const loginRateLimit = await db
+			.select()
+			.from(loginRateLimitsTable)
+			.where(eq(loginRateLimitsTable.email, email))
+			.get();
+
+		if (loginRateLimit?.lockedUntil && loginRateLimit.lockedUntil > now) {
+			return c.text(TOO_MANY_REQUESTS, 429);
+		}
+
 		const user = await db
 			.select()
 			.from(usersTable)
@@ -67,6 +83,32 @@ export const route = createHonoApp().post(
 		const passwordHash = hashPassword(password, user.salt);
 
 		if (passwordHash !== user.passwordHash) {
+			if (!loginRateLimit) {
+				await db.insert(loginRateLimitsTable).values({
+					email,
+					failedAttempts: 1,
+					lastAttemptAt: now,
+				});
+			} else if (loginRateLimit.failedAttempts >= LOGIN_RATE_LIMIT_MAX_ATTEMPTS) {
+				await db.update(loginRateLimitsTable)
+					.set({
+						failedAttempts: 0,
+						lockedUntil: offsetMilliSeconds(
+							now,
+							LOGIN_RATE_LIMIT_LOCK_DURATION_MS,
+						),
+						lastAttemptAt: now,
+					})
+					.where(eq(loginRateLimitsTable.email, email));
+			} else {
+				await db.update(loginRateLimitsTable)
+					.set({
+						failedAttempts: loginRateLimit.failedAttempts + 1,
+						lastAttemptAt: now,
+					})
+					.where(eq(loginRateLimitsTable.email, email));
+			}
+
 			return c.text(UNAUTHORIZED, 401);
 		}
 
@@ -76,7 +118,6 @@ export const route = createHonoApp().post(
 		} = {};
 
 		if (user.mfaTotpEnabled || user.mfaEmailOtpEnabled) {
-			const now = new Date();
 			const expireAt = offsetMilliSeconds(now, MFA_LOGIN_SESSION_EXPIRATION_MS);
 
 			if (user.mfaTotpEnabled) {

@@ -58,6 +58,21 @@ export const signupSessionsTable = sqliteTable("signup_sessions", {
 	expireAt: timestamp("expire_at").notNull(),
 });
 
+/** `login_rate_limits` table schema definition */
+export const loginRateLimitsTable = sqliteTable(
+	"login_rate_limits",
+	{
+		/** Email address (not a foreign key) */
+		email: text("email").primaryKey(),
+		/** Failed attempts count */
+		failedAttempts: integer("failed_attempts").default(0).notNull(),
+		/** Timestamp until which login is locked */
+		lockedUntil: timestamp("locked_until"),
+		/** Timestamp when the last attempt was made */
+		lastAttemptAt: timestamp("last_attempt_at").notNull(),
+	},
+);
+
 /** `login_sessions` table schema definition */
 export const loginSessionsTable = sqliteTable("login_sessions", {
 	/** UUIDv7 */
@@ -86,7 +101,7 @@ export const passwordResetSessionsTable = sqliteTable(
 		id: text("id").primaryKey(),
 		/** Reference to users.id */
 		userId: text("user_id")
-			.primaryKey()
+			.notNull()
 			.references(() => usersTable.id),
 		/** Hashed password reset token */
 		passwordResetTokenHash: text("password_reset_token_hash").notNull(),
@@ -103,6 +118,21 @@ export const passwordResetRateLimitsTable = sqliteTable(
 	{
 		/** Email address (not a foreign key) */
 		email: text("email").primaryKey(),
+		/** Timestamp when the last request was made */
+		lastRequestAt: timestamp("last_request_at").notNull().default(now()),
+		/** Timestamp when the rate limit expires */
+		expireAt: timestamp("expire_at").notNull(),
+	},
+);
+
+/** `password_change_rate_limits` table schema definition */
+export const passwordChangeRateLimitsTable = sqliteTable(
+	"password_change_rate_limits",
+	{
+		/** Reference to users.id */
+		userId: text("user_id")
+			.primaryKey()
+			.references(() => usersTable.id),
 		/** Timestamp when the last request was made */
 		lastRequestAt: timestamp("last_request_at").notNull().default(now()),
 		/** Timestamp when the rate limit expires */
