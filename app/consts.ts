@@ -21,6 +21,9 @@ export const LOGIN_RATE_LIMIT_MAX_ATTEMPTS = 5;
 /** Login rate limit lock duration in milliseconds */
 export const LOGIN_RATE_LIMIT_LOCK_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 
+/** Login rate limit record expiration duration in milliseconds */
+export const LOGIN_RATE_LIMIT_EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
+
 /** MFA login session expiration duration in milliseconds */
 export const MFA_LOGIN_SESSION_EXPIRATION_MS = 5 * 60 * 1000; // 5 minutes
 

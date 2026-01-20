@@ -24,6 +24,16 @@ const mockGetResendClient = mock(() => ({
 	},
 }));
 
+const mockValidateLoginRateLimit = mock<
+	() =>
+		| Promise<{ isLocked: true; lockedUntil: Date }>
+		| Promise<{ isLocked: false; currentFailedAttempts: number }>
+>(() => Promise.resolve({ isLocked: false, currentFailedAttempts: 0 }));
+
+const mockIncrementLoginAttempts = mock(() =>
+	Promise.resolve({ locked: false }),
+);
+
 mock.module("@/db/client", () => ({
 	getDBClient: mockGetDBClient,
 }));
@@ -41,6 +51,8 @@ mock.module("@/utils/auth", () => ({
 	getRefreshTokenFromCookie: mock(() => Promise.resolve()),
 	deleteAccessTokenCookie: mock(() => {}),
 	deleteRefreshTokenCookie: mock(() => {}),
+	validateLoginRateLimit: mockValidateLoginRateLimit,
+	incrementLoginAttempts: mockIncrementLoginAttempts,
 }));
 
 mock.module("@/utils/email", () => ({
@@ -62,9 +74,37 @@ beforeEach(() => {
 	mockSetAccessTokenInCookie.mockClear();
 	mockSetRefreshTokenInCookie.mockClear();
 	mockGetResendClient.mockClear();
+	mockValidateLoginRateLimit.mockClear();
+	mockIncrementLoginAttempts.mockClear();
+
+	// Reset default behavior
+	mockValidateLoginRateLimit.mockResolvedValue({
+		isLocked: false,
+		currentFailedAttempts: 0,
+	});
+	mockIncrementLoginAttempts.mockResolvedValue({ locked: false });
 });
 
 describe("POST /api/v1/login - Error cases", () => {
+	it("should return 429 when login is locked", async () => {
+		const futureDate = new Date(Date.now() + 900000); // 15 minutes from now
+
+		mockValidateLoginRateLimit.mockResolvedValue({
+			isLocked: true,
+			lockedUntil: futureDate,
+		});
+
+		const response = await api.v1.login.$post({
+			json: {
+				email: "test@example.com",
+				password: "password123",
+			},
+		});
+
+		expect(response.status).toBe(429);
+		expect(mockValidateLoginRateLimit).toHaveBeenCalledTimes(1);
+	});
+
 	it("should return 401 when user does not exist", async () => {
 		mockGetDBClient.mockReturnValue({
 			select: () => ({
@@ -113,6 +153,53 @@ describe("POST /api/v1/login - Error cases", () => {
 		});
 
 		expect(response.status).toBe(401);
+		expect(mockIncrementLoginAttempts).toHaveBeenCalledTimes(1);
+		expect(mockIncrementLoginAttempts).toHaveBeenCalledWith(
+			expect.anything(),
+			"test@example.com",
+			0,
+		);
+	});
+
+	it("should return 429 when password is incorrect and max attempts reached", async () => {
+		mockValidateLoginRateLimit.mockResolvedValue({
+			isLocked: false,
+			currentFailedAttempts: 4,
+		});
+
+		mockIncrementLoginAttempts.mockResolvedValue({ locked: true });
+
+		mockGetDBClient.mockReturnValue({
+			select: () => ({
+				from: () => ({
+					where: () => ({
+						get: () =>
+							Promise.resolve({
+								id: "user-id",
+								email: "test@example.com",
+								salt: "salt",
+								passwordHash: "wrong-hash",
+								mfaTotpEnabled: false,
+								mfaEmailOtpEnabled: false,
+							}),
+					}),
+				}),
+			}),
+		});
+
+		const response = await api.v1.login.$post({
+			json: {
+				email: "test@example.com",
+				password: "wrongpassword",
+			},
+		});
+
+		expect(response.status).toBe(429);
+		expect(mockIncrementLoginAttempts).toHaveBeenCalledWith(
+			expect.anything(),
+			"test@example.com",
+			4,
+		);
 	});
 
 	it("should return 400 when password is too short", async () => {

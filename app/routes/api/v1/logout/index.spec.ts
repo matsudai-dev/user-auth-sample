@@ -39,6 +39,8 @@ mock.module("@/utils/auth", () => ({
 	getRefreshTokenFromCookie: mockGetRefreshTokenFromCookie,
 	deleteAccessTokenCookie: mockDeleteAccessTokenCookie,
 	deleteRefreshTokenCookie: mockDeleteRefreshTokenCookie,
+	validateLoginRateLimit: mock(() => Promise.resolve()),
+	incrementLoginAttempts: mock(() => Promise.resolve()),
 }));
 
 const { apiRoutes } = await import("@/utils/api/client");

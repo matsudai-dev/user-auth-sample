@@ -34,6 +34,8 @@ mock.module("@/utils/auth", () => ({
 	getRefreshTokenFromCookie: mock(() => Promise.resolve()),
 	deleteAccessTokenCookie: mock(() => {}),
 	deleteRefreshTokenCookie: mock(() => {}),
+	validateLoginRateLimit: mock(() => Promise.resolve()),
+	incrementLoginAttempts: mock(() => Promise.resolve()),
 }));
 
 mock.module("@/utils/totp", () => ({

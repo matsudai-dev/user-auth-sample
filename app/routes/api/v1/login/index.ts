@@ -6,8 +6,6 @@ import {
 	MFA_LOGIN_SESSION_EXPIRATION_MS,
 	TOO_MANY_REQUESTS,
 	UNAUTHORIZED,
-	LOGIN_RATE_LIMIT_MAX_ATTEMPTS,
-	LOGIN_RATE_LIMIT_LOCK_DURATION_MS,
 } from "@/consts";
 import { getDBClient } from "@/db/client";
 import {
@@ -15,14 +13,15 @@ import {
 	mfaEmailOtpLoginSessionsTable,
 	mfaTotpLoginSessionsTable,
 	usersTable,
-	loginRateLimitsTable,
 } from "@/db/schemas";
 import { injectExternalErrors } from "@/middleware/external-errors";
 import {
 	generateAccessToken,
 	generateRefreshToken,
+	incrementLoginAttempts,
 	setAccessTokenInCookie,
 	setRefreshTokenInCookie,
+	validateLoginRateLimit,
 } from "@/utils/auth";
 import {
 	generateOtpCode,
@@ -60,13 +59,9 @@ export const route = createHonoApp().post(
 
 		const now = new Date();
 
-		const loginRateLimit = await db
-			.select()
-			.from(loginRateLimitsTable)
-			.where(eq(loginRateLimitsTable.email, email))
-			.get();
+		const loginRateLimit = await validateLoginRateLimit(c, email);
 
-		if (loginRateLimit?.lockedUntil && loginRateLimit.lockedUntil > now) {
+		if (loginRateLimit.isLocked) {
 			return c.text(TOO_MANY_REQUESTS, 429);
 		}
 
@@ -83,30 +78,14 @@ export const route = createHonoApp().post(
 		const passwordHash = hashPassword(password, user.salt);
 
 		if (passwordHash !== user.passwordHash) {
-			if (!loginRateLimit) {
-				await db.insert(loginRateLimitsTable).values({
-					email,
-					failedAttempts: 1,
-					lastAttemptAt: now,
-				});
-			} else if (loginRateLimit.failedAttempts >= LOGIN_RATE_LIMIT_MAX_ATTEMPTS) {
-				await db.update(loginRateLimitsTable)
-					.set({
-						failedAttempts: 0,
-						lockedUntil: offsetMilliSeconds(
-							now,
-							LOGIN_RATE_LIMIT_LOCK_DURATION_MS,
-						),
-						lastAttemptAt: now,
-					})
-					.where(eq(loginRateLimitsTable.email, email));
-			} else {
-				await db.update(loginRateLimitsTable)
-					.set({
-						failedAttempts: loginRateLimit.failedAttempts + 1,
-						lastAttemptAt: now,
-					})
-					.where(eq(loginRateLimitsTable.email, email));
+			const { locked } = await incrementLoginAttempts(
+				c,
+				email,
+				loginRateLimit.currentFailedAttempts,
+			);
+
+			if (locked) {
+				return c.text(TOO_MANY_REQUESTS, 429);
 			}
 
 			return c.text(UNAUTHORIZED, 401);

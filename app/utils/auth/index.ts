@@ -1,11 +1,17 @@
+import { eq } from "drizzle-orm";
 import type { Context, Env } from "hono";
 import { deleteCookie, getSignedCookie, setSignedCookie } from "hono/cookie";
 import { sign, verify } from "hono/jwt";
 import type { JWTPayload } from "hono/utils/jwt/types";
 import {
 	ACCESS_TOKEN_EXPIRATION_MS,
+	LOGIN_RATE_LIMIT_EXPIRATION_MS,
+	LOGIN_RATE_LIMIT_LOCK_DURATION_MS,
+	LOGIN_RATE_LIMIT_MAX_ATTEMPTS,
 	REFRESH_TOKEN_EXPIRATION_MS,
 } from "@/consts";
+import { getDBClient } from "@/db/client";
+import { loginRateLimitsTable } from "@/db/schemas";
 import { generateSecureToken, hashToken } from "@/utils/crypto/server";
 import { offsetMilliSeconds } from "@/utils/date";
 
@@ -187,4 +193,114 @@ export function deleteAccessTokenCookie(c: Context<Env>): void {
  */
 export function deleteRefreshTokenCookie(c: Context<Env>): void {
 	deleteCookie(c, REFRESH_TOKEN_NAME);
+}
+
+interface LockedLoginRateLimit {
+	isLocked: true;
+	lockedUntil: Date;
+}
+
+interface UnlockedLoginRateLimit {
+	isLocked: false;
+	currentFailedAttempts: number;
+}
+
+/**
+ * Validates login rate limit for the given email address.
+ *
+ * @param c - Hono context
+ * @param email - Email address to check
+ * @returns Lock status with either locked until time or current failed attempts count
+ */
+export async function validateLoginRateLimit(
+	c: Context<Env>,
+	email: string,
+): Promise<LockedLoginRateLimit | UnlockedLoginRateLimit> {
+	const db = getDBClient(c.env.DB);
+
+	const now = new Date();
+
+	const loginRateLimit = await db
+		.select()
+		.from(loginRateLimitsTable)
+		.where(eq(loginRateLimitsTable.email, email))
+		.get();
+
+	if (loginRateLimit?.lockedUntil && loginRateLimit.lockedUntil > now) {
+		return {
+			isLocked: true,
+			lockedUntil: loginRateLimit.lockedUntil,
+		};
+	}
+
+	if (loginRateLimit?.expireAt && loginRateLimit.expireAt <= now) {
+		return {
+			isLocked: false,
+			currentFailedAttempts: 0,
+		};
+	}
+
+	return {
+		isLocked: false,
+		currentFailedAttempts: loginRateLimit?.failedAttempts ?? 0,
+	};
+}
+
+interface IncrementLoginAttemptsResult {
+	locked: boolean;
+}
+
+/**
+ * Increments login attempt count for the given email address.
+ * Locks the account if max attempts threshold is reached.
+ *
+ * @param c - Hono context
+ * @param email - Email address to record attempt for
+ * @param currentFailAttempts - Current number of failed attempts
+ * @returns Result indicating whether the account was locked
+ */
+export async function incrementLoginAttempts(
+	c: Context<Env>,
+	email: string,
+	currentFailAttempts: number,
+): Promise<IncrementLoginAttemptsResult> {
+	const db = getDBClient(c.env.DB);
+
+	const now = new Date();
+
+	const expireAt = offsetMilliSeconds(now, LOGIN_RATE_LIMIT_EXPIRATION_MS);
+
+	let locked = false;
+
+	if (currentFailAttempts === 0) {
+		await db.insert(loginRateLimitsTable).values({
+			email,
+			failedAttempts: 1,
+			lastAttemptAt: now,
+			expireAt,
+		});
+	} else if (currentFailAttempts >= LOGIN_RATE_LIMIT_MAX_ATTEMPTS) {
+		await db
+			.update(loginRateLimitsTable)
+			.set({
+				failedAttempts: 0,
+				lockedUntil: offsetMilliSeconds(now, LOGIN_RATE_LIMIT_LOCK_DURATION_MS),
+				lastAttemptAt: now,
+				expireAt,
+			})
+			.where(eq(loginRateLimitsTable.email, email));
+
+		locked = true;
+	} else {
+		await db
+			.update(loginRateLimitsTable)
+			.set({
+				failedAttempts: currentFailAttempts + 1,
+				lastAttemptAt: now,
+				expireAt,
+			})
+			.where(eq(loginRateLimitsTable.email, email));
+	}
+
+	return { locked };
 }

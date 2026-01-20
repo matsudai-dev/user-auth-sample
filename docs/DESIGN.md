@@ -1285,6 +1285,7 @@ interface Response {
 - `failed_attempts`
 - `locked_until`
 - `last_attempt_at`
+- `expire_at`
 
 ### `password_reset_sessions`
 - `id` : UUIDv7

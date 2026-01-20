@@ -59,19 +59,18 @@ export const signupSessionsTable = sqliteTable("signup_sessions", {
 });
 
 /** `login_rate_limits` table schema definition */
-export const loginRateLimitsTable = sqliteTable(
-	"login_rate_limits",
-	{
-		/** Email address (not a foreign key) */
-		email: text("email").primaryKey(),
-		/** Failed attempts count */
-		failedAttempts: integer("failed_attempts").default(0).notNull(),
-		/** Timestamp until which login is locked */
-		lockedUntil: timestamp("locked_until"),
-		/** Timestamp when the last attempt was made */
-		lastAttemptAt: timestamp("last_attempt_at").notNull(),
-	},
-);
+export const loginRateLimitsTable = sqliteTable("login_rate_limits", {
+	/** Email address (not a foreign key) */
+	email: text("email").primaryKey(),
+	/** Failed attempts count */
+	failedAttempts: integer("failed_attempts").default(0).notNull(),
+	/** Timestamp until which login is locked */
+	lockedUntil: timestamp("locked_until"),
+	/** Timestamp when the last attempt was made */
+	lastAttemptAt: timestamp("last_attempt_at").notNull(),
+	/** Timestamp when the rate limit record expires */
+	expireAt: timestamp("expire_at").notNull(),
+});
 
 /** `login_sessions` table schema definition */
 export const loginSessionsTable = sqliteTable("login_sessions", {
