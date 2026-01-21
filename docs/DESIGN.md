@@ -1101,34 +1101,22 @@ interface Request {
   // なし
 }
 
-interface Session {
-  id: string;
-  userAgent: string;
-  createdAt: string;
-  lastAccessedAt: string;
-  isCurrent: boolean;
+interface Response {
+  sessions: Array<{
+    id: string;
+    userAgent: string;
+    createdAt: string;
+    lastAccessedAt: string;
+    isCurrent: boolean;
+  }>;
 }
-
-type Response = Array<{
-  id: string;
-  userAgent: string;
-  createdAt: string;
-  lastAccessedAt: string;
-  isCurrent: boolean;
-}>;
 ```
 
 1. `loginRequired` を実施
 2. `context.userId` を取得
 3. 現在のリフレッシュトークンをクッキーから取得
 4. ユーザーIDで `login_sessions` から全セッションを検索
-5. 各セッション情報を整形して返却
-    - `id`: セッションID
-    - `userAgent`: User-Agent文字列
-    - `createdAt`: セッション作成日時
-    - `lastAccessedAt`: 最終アクセス日時
-    - `isCurrent`: 現在のセッションかどうか（リフレッシュトークンで判定）
-6. `200 OK` を返却
+5. `200 OK` を返却
 
 [目次に戻る](#目次)
 
