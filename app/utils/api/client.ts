@@ -23,6 +23,7 @@ import apiV1PasswordReset from "@/routes/api/v1/password-reset";
 import apiV1PasswordResetSend from "@/routes/api/v1/password-reset/send";
 import apiV1Signup from "@/routes/api/v1/signup";
 import apiV1SignupComplete from "@/routes/api/v1/signup/complete";
+import apiV1UsersMe from "@/routes/api/v1/users/me";
 import { createHonoApp } from "@/utils/factory/hono";
 
 export const apiRoutes = createHonoApp()
@@ -64,7 +65,8 @@ export const apiRoutes = createHonoApp()
 	.route(
 		"/api/v1/mfa/email-otp/backup-codes/regenerate",
 		apiV1MfaEmailOtpBackupCodesRegenerate,
-	);
+	)
+	.route("/api/v1/users/me", apiV1UsersMe);
 
 export const api = hc<typeof apiRoutes>("/", {
 	init: {
