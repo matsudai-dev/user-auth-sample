@@ -1,7 +1,7 @@
 import { and, eq, gt } from "drizzle-orm";
 import {
 	BAD_REQUEST,
-	MFA_TOTP_ENABLE_SESSION_EXPIRATION_MS,
+	MFA_EMAIL_OTP_ENABLE_SESSION_EXPIRATION_MS,
 	NOT_FOUND,
 	TOO_MANY_REQUESTS,
 	UNAUTHORIZED,
@@ -75,7 +75,7 @@ export const route = createHonoApp().post(
 
 		const expireAt = offsetMilliSeconds(
 			now,
-			MFA_TOTP_ENABLE_SESSION_EXPIRATION_MS,
+			MFA_EMAIL_OTP_ENABLE_SESSION_EXPIRATION_MS,
 		);
 
 		await db.insert(mfaEmailOtpEnableSessionsTable).values({
