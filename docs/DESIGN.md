@@ -865,8 +865,6 @@ interface Response {
     - `usedAt` : 使用日時（`NULL` の場合は未使用）
 7. `200 OK` を返却
     - `backupCodes` : コード一覧
-    - `totalCount` : 総数
-    - `unusedCount` : 未使用の数
 
 [目次に戻る](#目次)
 
