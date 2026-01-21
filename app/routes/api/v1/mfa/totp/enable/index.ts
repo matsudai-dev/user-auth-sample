@@ -1,8 +1,9 @@
-import { eq } from "drizzle-orm";
+import { and, eq, gt } from "drizzle-orm";
 import {
 	BAD_REQUEST,
 	MFA_TOTP_ENABLE_SESSION_EXPIRATION_MS,
 	NOT_FOUND,
+	TOO_MANY_REQUESTS,
 	UNAUTHORIZED,
 } from "@/consts";
 import { getDBClient } from "@/db/client";
@@ -41,13 +42,28 @@ export const route = createHonoApp().post(
 			return c.text(BAD_REQUEST, 400);
 		}
 
+		const now = new Date();
+
+		const existingSession = await db
+			.select()
+			.from(mfaTotpEnableSessionsTable)
+			.where(
+				and(
+					eq(mfaTotpEnableSessionsTable.userId, user.id),
+					gt(mfaTotpEnableSessionsTable.expireAt, now),
+				),
+			)
+			.get();
+
+		if (existingSession) {
+			return c.text(TOO_MANY_REQUESTS, 429);
+		}
+
 		const totpSecret = generateTotpSecret();
 
 		const mfaTotpEnableSessionToken = generateSecureToken();
 
 		const mfaTotpEnableSessionTokenHash = hashToken(mfaTotpEnableSessionToken);
-
-		const now = new Date();
 
 		const expireAt = offsetMilliSeconds(
 			now,
