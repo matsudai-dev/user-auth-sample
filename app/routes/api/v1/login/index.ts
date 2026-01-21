@@ -96,10 +96,10 @@ export const route = createHonoApp().post(
 			mfaEmailOtpLoginSessionToken?: string;
 		} = {};
 
-		if (user.mfaTotpEnabled || user.mfaEmailOtpEnabled) {
+		if (user.mfaTotpSecret || user.mfaEmailOtpEnabled) {
 			const expireAt = offsetMilliSeconds(now, MFA_LOGIN_SESSION_EXPIRATION_MS);
 
-			if (user.mfaTotpEnabled) {
+			if (user.mfaTotpSecret) {
 				const mfaTotpLoginSessionToken = generateSecureToken();
 
 				const mfaTotpLoginSessionTokenHash = hashToken(

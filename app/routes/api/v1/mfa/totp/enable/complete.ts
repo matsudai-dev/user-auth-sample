@@ -99,7 +99,7 @@ export const route = createHonoApp().post(
 
 			await tx
 				.update(usersTable)
-				.set({ mfaTotpEnabled: true })
+				.set({ mfaTotpSecret: mfaTotpEnableSession.totpSecret })
 				.where(eq(usersTable.id, userId));
 		});
 

@@ -37,7 +37,7 @@ export const route = createHonoApp().post(
 			return c.text(NOT_FOUND, 404);
 		}
 
-		if (user.mfaTotpEnabled) {
+		if (user.mfaTotpSecret) {
 			return c.text(BAD_REQUEST, 400);
 		}
 

@@ -391,7 +391,7 @@ interface Cookie {
     - パスワードが一致しない場合は `401 Unauthorized` を返却
     - 認証失敗の試行回数をカウント（レート制限）
     - 試行回数が制限を超えた場合は `429 Too Many Requests` を返却
-3. ユーザーの `mfa_email_otp_enabled` または `mfa_totp_enabled` を確認
+3. ユーザーの `mfa_email_otp_enabled` または `mfa_totp_secret` を確認
 4. **MFAが有効な場合（いずれかのMFA方式が有効）:**
     - `mfa_login_session_token` （ランダム文字列）を生成
     - ユーザーの有効なMFA方式に応じてセッションを作成（有効期限: 5分）
@@ -796,7 +796,6 @@ interface Response {
 5. バックアップコードを生成（10個のランダム文字列）
 6. トランザクション開始
     - `users` テーブルを更新
-        - `mfa_totp_enabled` = `true`
         - `mfa_totp_secret` = セッションの `totp_secret`
     - `mfa_totp_backup_codes` テーブルにバックアップコードを保存（ハッシュ化）
     - `mfa_totp_enable_sessions` からレコードを削除
@@ -824,14 +823,13 @@ interface Response {
 3. ユーザーIDで `users` からユーザーを検索
     - ユーザーが存在しない場合は `404 Not Found` を返却
 4. TOTP MFAの有効状態を確認
-    - `mfa_totp_enabled` が `false` なら `400 Bad Request` を返却
+    - `mfa_totp_secret` が `NULL` なら `400 Bad Request` を返却
 5. パスワードをハッシュ化して照合
     - パスワードが一致しない場合は `401 Unauthorized` を返却
 6. TOTPコードを検証
     - コードが不正な場合は `401 Unauthorized` を返却
 7. トランザクション開始
     - `users` テーブルを更新
-        - `mfa_totp_enabled` = `false`
         - `mfa_totp_secret` = `NULL`
     - `mfa_totp_backup_codes` から該当ユーザーのコードを全て削除
     - コミット
@@ -863,7 +861,7 @@ interface Response {
 3. ユーザーIDで `users` からユーザーを検索
     - ユーザーが存在しない場合は `404 Not Found` を返却
 4. TOTP MFAの有効状態を確認
-    - `mfa_totp_enabled` が `false` なら `400 Bad Request` を返却
+    - `mfa_totp_Secret` が `NULL` なら `400 Bad Request` を返却
 5. `mfa_totp_backup_codes` からユーザーのバックアップコードを全て取得
 6. 各コードを整形:
     - `id` : バックアップコードID
@@ -893,7 +891,7 @@ interface Response {
 3. ユーザーIDで `users` からユーザーを検索
     - ユーザーが存在しない場合は `404 Not Found` を返却
 4. TOTP MFAの有効状態を確認
-    - `mfa_totp_enabled` が `false` なら `400 Bad Request` を返却
+    - `mfa_totp_secret` が `NULL` なら `400 Bad Request` を返却
 5. 新しいバックアップコードを生成（10個のランダム文字列）
 6. トランザクション開始
     - `mfa_totp_backup_codes` から該当ユーザーの既存コードを全て削除
@@ -1226,7 +1224,6 @@ interface Response {
 - `salt`
 - `password_hash`
 - `mfa_email_otp_enabled` : boolean
-- `mfa_totp_enabled` : boolean
 - `mfa_totp_secret` : string (nullable)
 - `created_at`
 

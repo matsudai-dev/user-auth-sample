@@ -300,7 +300,7 @@ describe("POST /api/v1/login - Success cases with MFA", () => {
 			email: "test@example.com",
 			salt,
 			passwordHash: hashPassword("password123", salt),
-			mfaTotpEnabled: true,
+			mfaTotpSecret: "JBSWY3DPEHPK3PXP",
 			mfaEmailOtpEnabled: false,
 		};
 
@@ -389,7 +389,7 @@ describe("POST /api/v1/login - Success cases with MFA", () => {
 			email: "test@example.com",
 			salt,
 			passwordHash: hashPassword("password123", salt),
-			mfaTotpEnabled: true,
+			mfaTotpSecret: "JBSWY3DPEHPK3PXP",
 			mfaEmailOtpEnabled: true,
 		};
 

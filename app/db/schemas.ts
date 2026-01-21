@@ -22,8 +22,6 @@ export const usersTable = sqliteTable("users", {
 	passwordHash: text("password_hash").notNull(),
 	/** Multi-factor authentication via email OTP enabled */
 	mfaEmailOtpEnabled: boolean("mfa_email_otp_enabled").notNull().default(false),
-	/** Multi-factor authentication via TOTP enabled */
-	mfaTotpEnabled: boolean("mfa_totp_enabled").notNull().default(false),
 	/** TOTP secret for multi-factor authentication */
 	mfaTotpSecret: text("mfa_totp_secret"),
 	/** Timestamp of user creation */
