@@ -846,13 +846,9 @@ interface Request {
 
 interface Response {
   backupCodes: Array<{
-    id: string;
-    partialCode: string; // 一部マスク表示（例: "****-****-AB12"）
-    used: boolean;
+    lastFourChars: string;
     usedAt?: string;
   }>;
-  totalCount: number;
-  unusedCount: number;
 }
 ```
 
