@@ -94,6 +94,7 @@ export const route = createHonoApp().post(
 					id: generateUuidv7(),
 					userId,
 					backupCodeHash: hashToken(code),
+					lastFourChars: code.slice(-4),
 				})),
 			);
 
