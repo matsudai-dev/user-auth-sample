@@ -1007,7 +1007,6 @@ interface Response {
 3. `request.mfaEmailOtpDisableSessionToken` のハッシュ値で `mfa_email_otp_disable_sessions.mfa_email_otp_disable_session_token_hash` を検索
     - セッションが存在しない場合は `401 Unauthorized` を返却
     - セッションが有効期限切れの場合は `410 Gone` を返却
-    - セッションの `user_id` が現在のユーザーIDと一致しない場合は `403 Forbidden` を返却
 4. Email OTPコードを検証（`request.otpCode` をハッシュ化してセッションの `otp_code_hash` と照合）
     - コードが不正な場合は `401 Unauthorized` を返却
 5. トランザクション開始
