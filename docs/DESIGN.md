@@ -27,7 +27,6 @@
     - [`POST /api/v1/password-reset`](#post-apiv1password-reset) - パスワードリセット完了
     - [`POST /api/v1/password-change`](#post-apiv1password-change) - パスワード変更
     - [`POST /api/v1/email-change/send`](#post-apiv1email-changesend) - メールアドレス変更申請
-    - [`POST /api/v1/email-change`](#post-apiv1email-change) - メールアドレス変更完了
     - [`POST /api/v1/mfa/totp/enable`](#post-apiv1mfatotpenable) - TOTP MFA有効化開始
     - [`POST /api/v1/mfa/totp/enable/complete`](#post-apiv1mfatotpenablecomplete) - TOTP MFA有効化完了
     - [`POST /api/v1/mfa/totp/disable`](#post-apiv1mfatotpdisable) - TOTP MFA無効化
@@ -740,31 +739,6 @@ interface Response {
 8. `email_change_sessions` にレコードを作成（有効期限: 24時間）
 9. 確認URL（ `/email-change/complete?token={email_change_token}` ）を新しいメールアドレスへ送信
 10. `200 OK` を返却
-
-[目次に戻る](#目次)
-
-### `POST /api/v1/email-change`
-
-```ts
-interface Request {
-  token: string;
-}
-
-interface Response {
-  // なし
-}
-```
-
-1. `request.token` のハッシュ値で `email_change_sessions.email_change_token_hash` を検索
-    - セッションが存在しない場合は `401 Unauthorized` を返却
-    - セッションが有効期限切れの場合は `410 Gone` を返却
-2. 新しいメールアドレスが他のユーザーで使用中か再度確認
-    - 使用中の場合は `409 Conflict` を返却
-3. `users` テーブルの `email` を更新
-4. `email_change_sessions` からレコードを削除
-5. セキュリティのため、該当ユーザーの全てのログインセッションを無効化
-    - `login_sessions` から該当ユーザーのセッションを全て削除
-6. `200 OK` を返却
 
 [目次に戻る](#目次)
 
