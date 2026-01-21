@@ -1,4 +1,34 @@
-import { createHmac } from "node:crypto";
+import { createHmac, randomBytes } from "node:crypto";
+
+const BASE32_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+
+/**
+ * Encodes a buffer to a base32 string.
+ *
+ * @param buffer - Buffer to encode
+ * @returns Base32-encoded string
+ */
+export function base32Encode(buffer: Buffer): string {
+	let bits = 0;
+	let value = 0;
+	let output = "";
+
+	for (const byte of buffer) {
+		value = (value << 8) | byte;
+		bits += 8;
+
+		while (bits >= 5) {
+			output += BASE32_CHARS[(value >>> (bits - 5)) & 0x1f];
+			bits -= 5;
+		}
+	}
+
+	if (bits > 0) {
+		output += BASE32_CHARS[(value << (5 - bits)) & 0x1f];
+	}
+
+	return output;
+}
 
 /**
  * Decodes a base32-encoded string to a buffer.
@@ -7,7 +37,6 @@ import { createHmac } from "node:crypto";
  * @returns Decoded buffer
  */
 export function base32Decode(encoded: string): Buffer {
-	const base32Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 	const cleanedInput = encoded.toUpperCase().replace(/=+$/, "");
 
 	let bits = 0;
@@ -15,7 +44,7 @@ export function base32Decode(encoded: string): Buffer {
 	const output: number[] = [];
 
 	for (const char of cleanedInput) {
-		const index = base32Chars.indexOf(char);
+		const index = BASE32_CHARS.indexOf(char);
 
 		if (index === -1) {
 			throw new Error(`Invalid base32 character: ${char}`);
@@ -31,6 +60,20 @@ export function base32Decode(encoded: string): Buffer {
 	}
 
 	return Buffer.from(output);
+}
+
+/**
+ * Generates a random TOTP secret key.
+ *
+ * @returns 32-character base32-encoded secret string
+ *
+ * @example
+ * const secret = generateTotpSecret();
+ * console.log(secret); // "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP"
+ */
+export function generateTotpSecret(): string {
+	const bytes = randomBytes(20);
+	return base32Encode(bytes);
 }
 
 /**

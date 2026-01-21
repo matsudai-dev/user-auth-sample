@@ -29,3 +29,6 @@ export const MFA_LOGIN_SESSION_EXPIRATION_MS = 5 * 60 * 1000; // 5 minutes
 
 /** Password reset session expiration duration in milliseconds */
 export const PASSWORD_RESET_SESSION_EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
+
+/** MFA TOTP enable session expiration duration in milliseconds */
+export const MFA_TOTP_ENABLE_SESSION_EXPIRATION_MS = 15 * 60 * 1000; // 15 minutes

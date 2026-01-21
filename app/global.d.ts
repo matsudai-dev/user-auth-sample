@@ -21,6 +21,7 @@ declare module "hono" {
 			RESEND_EMAIL_FROM: string;
 			ACCESS_TOKEN_SECRET_KEY: string;
 			REFRESH_TOKEN_SECRET_KEY: string;
+			TOTP_ISSUER: string;
 		} & NodeJS.ProcessEnv;
 	}
 }

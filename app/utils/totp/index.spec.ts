@@ -1,5 +1,25 @@
 import { describe, expect, it } from "bun:test";
-import { base32Decode, generateTotpCode, verifyTotpCode } from ".";
+import {
+	base32Decode,
+	base32Encode,
+	generateTotpCode,
+	generateTotpSecret,
+	verifyTotpCode,
+} from ".";
+
+describe("base32Encode", () => {
+	it("should encode buffer to base32 string", () => {
+		const buffer = Buffer.from([0x48, 0x65, 0x6c, 0x6c, 0x6f]);
+		const encoded = base32Encode(buffer);
+		expect(encoded).toBe("JBSWY3DP");
+	});
+
+	it("should encode 20 bytes to 32 characters", () => {
+		const buffer = Buffer.alloc(20, 0xff);
+		const encoded = base32Encode(buffer);
+		expect(encoded).toHaveLength(32);
+	});
+});
 
 describe("base32Decode", () => {
 	it("should decode valid base32 string", () => {
@@ -47,6 +67,33 @@ describe("base32Decode", () => {
 		const decoded = base32Decode(encoded);
 
 		expect(decoded.toString()).toBe("Hello World");
+	});
+});
+
+describe("generateTotpSecret", () => {
+	it("should generate 32-character base32 string", () => {
+		const secret = generateTotpSecret();
+		expect(secret).toHaveLength(32);
+	});
+
+	it("should generate valid base32 characters only", () => {
+		const secret = generateTotpSecret();
+		const base32Pattern = /^[A-Z2-7]+$/;
+		expect(base32Pattern.test(secret)).toBe(true);
+	});
+
+	it("should generate different secrets on each call", () => {
+		const secret1 = generateTotpSecret();
+		const secret2 = generateTotpSecret();
+		expect(secret1).not.toBe(secret2);
+	});
+
+	it("should generate secrets with high entropy", () => {
+		const secrets = new Set<string>();
+		for (let i = 0; i < 100; i++) {
+			secrets.add(generateTotpSecret());
+		}
+		expect(secrets.size).toBe(100);
 	});
 });
 
