@@ -44,3 +44,9 @@ export const BACKUP_CODES_COUNT = 10;
 
 /** Length of each backup code */
 export const BACKUP_CODE_LENGTH = 12;
+
+/** Deleted user reregistration allowed duration in milliseconds */
+export const DELETED_USER_REREGISTRATION_ALLOWED_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+/** Deleted user record expiration duration in milliseconds */
+export const DELETED_USER_EXPIRATION_MS = 31 * 24 * 60 * 60 * 1000; // 31 days
