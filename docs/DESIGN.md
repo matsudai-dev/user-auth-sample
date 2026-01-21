@@ -859,12 +859,8 @@ interface Response {
 4. TOTP MFAの有効状態を確認
     - `mfa_totp_Secret` が `NULL` なら `400 Bad Request` を返却
 5. `mfa_totp_backup_codes` からユーザーのバックアップコードを全て取得
-6. 各コードを整形:
-    - `id` : バックアップコードID
-    - `partialCode` : 最後の4文字のみ表示、残りは `*` でマスク
-    - `usedAt` : 使用日時（`NULL` の場合は未使用）
-7. `200 OK` を返却
-    - `backupCodes` : コード一覧
+6. `200 OK` を返却
+    - `backupCodes` : コード一覧（末尾4文字と使用済みフラグのみ）
 
 [目次に戻る](#目次)
 
@@ -1028,13 +1024,9 @@ interface Request {
 
 interface Response {
   backupCodes: Array<{
-    id: string;
-    partialCode: string; // 一部マスク表示（例: "****-****-AB12"）
-    used: boolean;
+    lastFourChars: string;
     usedAt?: string;
   }>;
-  totalCount: number;
-  unusedCount: number;
 }
 ```
 
@@ -1045,14 +1037,8 @@ interface Response {
 4. Email OTP MFAの有効状態を確認
     - `mfa_email_otp_enabled` が `false` なら `400 Bad Request` を返却
 5. `mfa_email_otp_backup_codes` からユーザーのバックアップコードを全て取得
-6. 各コードを整形:
-    - `id` : バックアップコードID
-    - `partialCode` : 最後の4文字のみ表示、残りは `*` でマスク
-    - `usedAt` : 使用日時（`NULL` の場合は未使用）
-7. `200 OK` を返却
-    - `backupCodes` : コード一覧
-    - `totalCount` : 総数
-    - `unusedCount` : 未使用の数
+6. `200 OK` を返却
+    - `backupCodes` : コード一覧（末尾4文字と使用済みフラグのみ）
 
 [目次に戻る](#目次)
 

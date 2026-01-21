@@ -290,6 +290,8 @@ export const mfaEmailOtpBackupCodesTable = sqliteTable(
 			.references(() => usersTable.id),
 		/** Hashed backup code */
 		backupCodeHash: text("backup_code_hash").notNull(),
+		/** Last four characters of the backup code for identification */
+		lastFourChars: text("last_four_chars").notNull(),
 		/** Timestamp when the backup code was created */
 		createdAt: timestamp("created_at").notNull().default(now()),
 		/** Timestamp when the backup code was used */
