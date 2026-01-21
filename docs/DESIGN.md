@@ -791,7 +791,6 @@ interface Response {
 3. `request.mfaTotpEnableSessionToken` のハッシュ値で `mfa_totp_enable_sessions.mfa_totp_enable_session_token_hash` を検索
     - セッションが存在しない場合は `401 Unauthorized` を返却
     - セッションが有効期限切れの場合は `410 Gone` を返却
-    - セッションの `user_id` が現在のユーザーIDと一致しない場合は `403 Forbidden` を返却
 4. TOTPコードを検証（`request.totpCode` とセッションの `totp_secret` を使用）
     - コードが不正な場合は `401 Unauthorized` を返却
 5. バックアップコードを生成（10個のランダム文字列）

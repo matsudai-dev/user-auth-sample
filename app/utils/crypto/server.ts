@@ -1,4 +1,5 @@
 import { createHash, randomBytes, randomInt } from "node:crypto";
+import { BACKUP_CODE_LENGTH, BACKUP_CODES_COUNT } from "@/consts";
 
 /**
  * Generates a UUIDv7 (time-ordered UUID).
@@ -128,4 +129,36 @@ export function hashPassword(password: string, salt: string): string {
 export function generateOtpCode(): string {
 	const code = randomInt(0, 1000000);
 	return code.toString().padStart(6, "0");
+}
+
+/**
+ * Generates secure backup codes for account recovery.
+ *
+ * @param count - Number of backup codes to generate (default: 10)
+ * @param length - Length of each backup code (default: 12)
+ * @returns Array of backup codes
+ *
+ * @example
+ * const codes = generateBackupCodes();
+ * console.log(codes); // ["A1B2C3D4E5F6", "G7H8I9J0K1L2", ...]
+ */
+export function generateBackupCodes(
+	count = BACKUP_CODES_COUNT,
+	length = BACKUP_CODE_LENGTH,
+): Array<string> {
+	const codes: Array<string> = [];
+	const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+	for (let i = 0; i < count; i++) {
+		const bytes = randomBytes(length);
+		let code = "";
+
+		for (const byte of bytes) {
+			code += chars[byte % chars.length];
+		}
+
+		codes.push(code);
+	}
+
+	return codes;
 }

@@ -32,3 +32,9 @@ export const PASSWORD_RESET_SESSION_EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
 
 /** MFA TOTP enable session expiration duration in milliseconds */
 export const MFA_TOTP_ENABLE_SESSION_EXPIRATION_MS = 15 * 60 * 1000; // 15 minutes
+
+/** Number of backup codes to generate */
+export const BACKUP_CODES_COUNT = 10;
+
+/** Length of each backup code */
+export const BACKUP_CODE_LENGTH = 12;

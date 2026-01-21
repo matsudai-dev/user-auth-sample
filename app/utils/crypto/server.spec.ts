@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { setTimeout } from "node:timers/promises";
 import {
+	generateBackupCodes,
 	generateOtpCode,
 	generateSalt,
 	generateSecureToken,
@@ -260,5 +261,62 @@ describe("generateOtpCode", () => {
 			expect(numericCode).toBeGreaterThanOrEqual(0);
 			expect(numericCode).toBeLessThanOrEqual(999999);
 		}
+	});
+});
+
+describe("generateBackupCodes", () => {
+	it("should generate default 10 backup codes", () => {
+		const codes = generateBackupCodes();
+		expect(codes).toHaveLength(10);
+	});
+
+	it("should generate codes with default 12 characters length", () => {
+		const codes = generateBackupCodes();
+		for (const code of codes) {
+			expect(code).toHaveLength(12);
+		}
+	});
+
+	it("should generate custom number of codes", () => {
+		const codes = generateBackupCodes(5);
+		expect(codes).toHaveLength(5);
+	});
+
+	it("should generate codes with custom length", () => {
+		const codes = generateBackupCodes(10, 16);
+		for (const code of codes) {
+			expect(code).toHaveLength(16);
+		}
+	});
+
+	it("should generate codes with valid characters only (A-Z, 0-9)", () => {
+		const codes = generateBackupCodes();
+		const validPattern = /^[A-Z0-9]+$/;
+		for (const code of codes) {
+			expect(validPattern.test(code)).toBe(true);
+		}
+	});
+
+	it("should generate unique codes", () => {
+		const codes = generateBackupCodes();
+		const uniqueCodes = new Set(codes);
+		expect(uniqueCodes.size).toBe(codes.length);
+	});
+
+	it("should generate different codes on each call", () => {
+		const codes1 = generateBackupCodes();
+		const codes2 = generateBackupCodes();
+		expect(codes1).not.toEqual(codes2);
+	});
+
+	it("should generate codes with high entropy", () => {
+		const allCodes = new Set<string>();
+		for (let i = 0; i < 10; i++) {
+			const codes = generateBackupCodes();
+			for (const code of codes) {
+				allCodes.add(code);
+			}
+		}
+		expect(allCodes.size).toBe(100);
 	});
 });
