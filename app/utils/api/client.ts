@@ -1,4 +1,5 @@
 import { hc } from "hono/client";
+import apiV1EmailChangeSend from "@/routes/api/v1/email-change/send";
 import apiV1Login from "@/routes/api/v1/login";
 import apiV1LoginMfaEmailOtp from "@/routes/api/v1/login/mfa/email-otp";
 import apiV1LoginMfaEmailOtpBackupCode from "@/routes/api/v1/login/mfa/email-otp/backup-code";
@@ -28,7 +29,8 @@ export const apiRoutes = createHonoApp()
 	.route("/api/v1/logout", apiV1Logout)
 	.route("/api/v1/password-reset/send", apiV1PasswordResetSend)
 	.route("/api/v1/password-reset", apiV1PasswordReset)
-	.route("/api/v1/password-change", apiV1PasswordChange);
+	.route("/api/v1/password-change", apiV1PasswordChange)
+	.route("/api/v1/email-change/send", apiV1EmailChangeSend);
 
 export const api = hc<typeof apiRoutes>("/", {
 	init: {

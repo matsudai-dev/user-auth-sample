@@ -25,9 +25,9 @@
     - [`POST /api/v1/logout`](#post-apiv1logout) - ログアウト
     - [`POST /api/v1/password-reset/send`](#post-apiv1password-resetsend) - パスワードリセット申請
     - [`POST /api/v1/password-reset`](#post-apiv1password-reset) - パスワードリセット完了
-    - [`POST /api/v1/password-change`](#post-apiv1userspassword-change) - パスワード変更
-    - [`POST /api/v1/email-change`](#post-apiv1usersemail-change) - メールアドレス変更申請
-    - [`POST /api/v1/email-change/complete`](#post-apiv1usersemail-changecomplete) - メールアドレス変更完了
+    - [`POST /api/v1/password-change`](#post-apiv1password-change) - パスワード変更
+    - [`POST /api/v1/email-change/send`](#post-apiv1email-changesend) - メールアドレス変更申請
+    - [`POST /api/v1/email-change`](#post-apiv1email-change) - メールアドレス変更完了
     - [`POST /api/v1/mfa/totp/enable`](#post-apiv1mfatotpenable) - TOTP MFA有効化開始
     - [`POST /api/v1/mfa/totp/enable/complete`](#post-apiv1mfatotpenablecomplete) - TOTP MFA有効化完了
     - [`POST /api/v1/mfa/totp/disable`](#post-apiv1mfatotpdisable) - TOTP MFA無効化
@@ -714,7 +714,7 @@ interface Response {
 
 [目次に戻る](#目次)
 
-### `POST /api/v1/email-change`
+### `POST /api/v1/email-change/send`
 
 ```ts
 interface Request {
@@ -743,7 +743,7 @@ interface Response {
 
 [目次に戻る](#目次)
 
-### `POST /api/v1/email-change/complete`
+### `POST /api/v1/email-change`
 
 ```ts
 interface Request {
