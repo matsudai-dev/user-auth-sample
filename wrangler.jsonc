@@ -11,8 +11,8 @@
 		{
 			"binding": "DB",
 			"database_name": "user-auth-sample",
-			"database_id": "",
-			"migrations_dir": "./db/drizzle"
+			"database_id": "xxx",
+			"migrations_dir": "./app/db/drizzle"
 		}
 	]
 }

@@ -7,6 +7,10 @@ bun install
 ```
 
 ```sh
+bun run db:migrate:local
+```
+
+```sh
 bun run dev
 ```
 
