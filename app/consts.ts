@@ -5,6 +5,7 @@ export const NOT_FOUND = "Not Found";
 export const CONFLICT = "Conflict";
 export const GONE = "Gone";
 export const TOO_MANY_REQUESTS = "Too Many Requests";
+export const INTERNAL_SERVER_ERROR = "Internal Server Error";
 
 /** Signup session expiration durations in milliseconds */
 export const SIGNUP_SESSION_EXPIRATION_MS = 24 * 60 * 60 * 1000; // 24 hours

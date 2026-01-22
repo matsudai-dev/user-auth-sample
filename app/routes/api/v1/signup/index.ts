@@ -4,6 +4,7 @@ import { z } from "zod";
 import {
 	BAD_REQUEST,
 	CONFLICT,
+	INTERNAL_SERVER_ERROR,
 	OK,
 	SIGNUP_SESSION_EXPIRATION_MS,
 	TOO_MANY_REQUESTS,
@@ -96,7 +97,7 @@ export const route = createHonoApp().post(
 
 		const resend = getResendClient(c.env.RESEND_API_KEY);
 
-		await resend.emails.send({
+		const result = await resend.emails.send({
 			from: c.env.RESEND_EMAIL_FROM,
 			to: email,
 			subject: "Complete Your Account Registration",
@@ -107,6 +108,11 @@ export const route = createHonoApp().post(
 				<p>This link will expire in 24 hours.</p>
 			`,
 		});
+
+		if (result.error) {
+			console.log("Resend error details:", result.error);
+			return c.text(INTERNAL_SERVER_ERROR, 500);
+		}
 
 		return c.text(OK, 200);
 	},
