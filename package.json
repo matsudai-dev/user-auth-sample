@@ -4,14 +4,18 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
+		"db:generate": "drizzle-kit generate",
+		"db:create:prod": "wrangler d1 create user-auth-sample",
+		"db:migrate:local": "wrangler d1 migrations apply DB --local",
+		"db:migrate:prod": "wrangler d1 migrations apply DB --remote",
 		"biome": "biome check --write --unsafe",
 		"tsc": "tsc --noEmit",
-		"test": "bun test ./app",
-		"check": "bun run biome && bun run tsc && bun run test",
+		"test:unit": "bun test ./app",
+		"check": "bun run biome && bun run tsc && bun run test:unit",
 		"dev": "vite",
 		"build": "vite build --mode client && vite build",
 		"preview": "wrangler dev",
-		"deploy": "npm run build && wrangler deploy"
+		"deploy": "wrangler deploy"
 	},
 	"dependencies": {
 		"@hono/standard-validator": "^0.2.2",
@@ -33,7 +37,7 @@
 		"drizzle-kit": "^0.31.8",
 		"tailwindcss": "^4.1.18",
 		"typescript": "^5.9.3",
-		"vite": "^6.4.1",
+		"vite": "^7.3.1",
 		"wrangler": "^4.59.2"
 	}
 }

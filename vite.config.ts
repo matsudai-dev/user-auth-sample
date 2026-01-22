@@ -14,6 +14,9 @@ export default defineConfig(() => {
 			tailwindcss(),
 			build(),
 		],
+		ssr: {
+			external: ["resend"],
+		},
 		resolve: {
 			alias: {
 				"@": `${process.cwd()}/app`,
@@ -24,6 +27,7 @@ export default defineConfig(() => {
 			watch: {
 				usePolling: true,
 				interval: 1000,
+				ignored: ["**/node_modules/**", "**/.git/**"],
 			},
 		},
 	};

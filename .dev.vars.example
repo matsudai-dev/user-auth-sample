@@ -1,5 +1,5 @@
 RESEND_API_KEY=your_resend_api_key
-RESEND_EMAIL_FROM=your_email_address
+RESEND_EMAIL_FROM=onboarding@resend.dev
 ACCESS_TOKEN_SECRET_KEY=your_access_token_secret_key
 REFRESH_TOKEN_SECRET_KEY=your_refresh_token_secret_key
 TOTP_ISSUER=user-auth-sample
